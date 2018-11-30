@@ -3,4 +3,6 @@
 
 void board_init(void);
 
+void draw_dots(void);
+
 #endif
