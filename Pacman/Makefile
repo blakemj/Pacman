@@ -1,5 +1,5 @@
 NAME = main
-OBJECTS = board.o 
+OBJECTS = board.o pacman_char.o 
 
 CS107E = ../../cs107e_home/cs107e.github.io/cs107e
 CFLAGS  = -I$(CS107E)/include -g -Wall -Wpointer-arith
