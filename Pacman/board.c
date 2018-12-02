@@ -3,6 +3,7 @@
 
 void board_init() {
     gl_init(224, 288, GL_DOUBLEBUFFER);
+    gl_clear(GL_BLACK);
     //This is the surrounding border
     gl_draw_line(4, 3*8 + 4, 13*8 + 4, 3*8 + 4, GL_BLUE);
     gl_draw_line(14*8 + 4, 3*8 + 4, 27*8 + 4, 3*8 + 4, GL_BLUE);
@@ -16,9 +17,9 @@ void board_init() {
     gl_draw_line(5*8 + 4, 12*8 + 4, 5*8 + 4, 16*8 + 4, GL_BLUE);
     gl_draw_line(22*8 + 4, 12*8 + 4, 22*8 + 4, 16*8 + 4, GL_BLUE);
     gl_draw_line(0, 16*8 + 4, 5*8 + 4, 16*8 + 4, GL_BLUE);
-    gl_draw_line(22*8 + 4, 16*8 + 4, 224, 16*8 + 4, GL_BLUE);
+    gl_draw_line(22*8 + 4, 16*8 + 4, gl_get_width(), 16*8 + 4, GL_BLUE);
     gl_draw_line(0, 18*8 + 4, 5*8 + 4, 18*8 + 4, GL_BLUE);
-    gl_draw_line(22*8 + 4, 18*8 + 4, 224, 18*8 + 4, GL_BLUE);
+    gl_draw_line(22*8 + 4, 18*8 + 4, gl_get_width(), 18*8 + 4, GL_BLUE);
     gl_draw_line(5*8 + 4, 18*8 + 4, 5*8 + 4, 22*8 + 4, GL_BLUE);
     gl_draw_line(22*8 + 4, 18*8 + 4, 22*8 + 4, 22*8 + 4, GL_BLUE);
     gl_draw_line(4, 22*8 + 4, 5*8 + 4, 22*8 + 4, GL_BLUE);
@@ -201,9 +202,10 @@ void draw_dots() {
     }
     gl_draw_pixel(12*8 + 4, 6*8 + 4, GL_WHITE);
     gl_draw_pixel(15*8 + 4, 6*8 + 4, GL_WHITE);
-    gl_draw_rect(8, 6*8, 8, 8, GL_WHITE);
-    gl_draw_rect(26*8, 6*8, 8, 8, GL_WHITE);
-    gl_draw_rect(8, 26*8, 8, 8, GL_WHITE);
-    gl_draw_rect(26*8, 26*8, 8, 8, GL_WHITE);
+    color_t superDotColor = gl_color(0xff, 0xff, 0xe5);
+    gl_draw_rect(8, 6*8, 8, 8, superDotColor);
+    gl_draw_rect(26*8, 6*8, 8, 8, superDotColor);
+    gl_draw_rect(8, 26*8, 8, 8, superDotColor);
+    gl_draw_rect(26*8, 26*8, 8, 8, superDotColor);
 }
 
