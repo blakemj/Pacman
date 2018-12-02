@@ -1,127 +1,134 @@
 #include "gl.h"
 #include "board.h"
 
+#define BOARD_WIDTH 224
+#define BOARD_HEIGHT 288
+#define TILE_WIDTH BOARD_WIDTH / 28
+#define HALF_TILE TILE_WIDTH / 2
+
+int numDots;
+
 void board_init() {
-    gl_init(224, 288, GL_DOUBLEBUFFER);
+    gl_init(BOARD_WIDTH, BOARD_HEIGHT, GL_DOUBLEBUFFER);
     gl_clear(GL_BLACK);
     //This is the surrounding border
-    gl_draw_line(4, 3*8 + 4, 13*8 + 4, 3*8 + 4, GL_BLUE);
-    gl_draw_line(14*8 + 4, 3*8 + 4, 27*8 + 4, 3*8 + 4, GL_BLUE);
-    gl_draw_line(14*8 + 4, 3*8 + 4, 14*8 + 4, 7*8 + 4, GL_BLUE);
-    gl_draw_line(13*8 + 4, 3*8 + 4, 13*8 + 4, 7*8 + 4, GL_BLUE);
-    gl_draw_line(13*8 + 4, 7*8 + 4, 14*8 + 4, 7*8 + 4, GL_BLUE);
-    gl_draw_line(4, 3*8 + 4, 4, 12*8 + 4, GL_BLUE);
-    gl_draw_line(27*8 + 4, 3*8 + 4, 27*8 + 4, 12*8 + 4, GL_BLUE);
-    gl_draw_line(4, 12*8 + 4, 5*8 + 4, 12*8 + 4, GL_BLUE);
-    gl_draw_line(22*8 + 4, 12*8 + 4, 27*8 + 4, 12*8 + 4, GL_BLUE);
-    gl_draw_line(5*8 + 4, 12*8 + 4, 5*8 + 4, 16*8 + 4, GL_BLUE);
-    gl_draw_line(22*8 + 4, 12*8 + 4, 22*8 + 4, 16*8 + 4, GL_BLUE);
-    gl_draw_line(0, 16*8 + 4, 5*8 + 4, 16*8 + 4, GL_BLUE);
-    gl_draw_line(22*8 + 4, 16*8 + 4, gl_get_width(), 16*8 + 4, GL_BLUE);
-    gl_draw_line(0, 18*8 + 4, 5*8 + 4, 18*8 + 4, GL_BLUE);
-    gl_draw_line(22*8 + 4, 18*8 + 4, gl_get_width(), 18*8 + 4, GL_BLUE);
-    gl_draw_line(5*8 + 4, 18*8 + 4, 5*8 + 4, 22*8 + 4, GL_BLUE);
-    gl_draw_line(22*8 + 4, 18*8 + 4, 22*8 + 4, 22*8 + 4, GL_BLUE);
-    gl_draw_line(4, 22*8 + 4, 5*8 + 4, 22*8 + 4, GL_BLUE);
-    gl_draw_line(22*8 + 4, 22*8 + 4, 27*8 + 4, 22*8 + 4, GL_BLUE);
-    gl_draw_line(4, 22*8 + 4, 4, 27*8 + 4, GL_BLUE);
-    gl_draw_line(27*8 + 4, 22*8 + 4, 27*8 + 4, 27*8 + 4, GL_BLUE);
-    gl_draw_line(4, 27*8 + 4, 2*8 + 4, 27*8 + 4, GL_BLUE);
-    gl_draw_line(25*8 + 4, 27*8 + 4, 27*8 + 4, 27*8 + 4, GL_BLUE);
-    gl_draw_line(2*8 + 4, 27*8 + 4, 2*8 + 4, 28*8 + 4, GL_BLUE);
-    gl_draw_line(25*8 + 4, 27*8 + 4, 25*8 + 4, 28*8 + 4, GL_BLUE);
-    gl_draw_line(4, 28*8 + 4, 2*8 + 4, 28*8 + 4, GL_BLUE);
-    gl_draw_line(25*8 + 4, 28*8 + 4, 27*8 + 4, 28*8 + 4, GL_BLUE);
-    gl_draw_line(4, 28*8 + 4, 4, 33*8 + 4, GL_BLUE);
-    gl_draw_line(27*8 + 4, 28*8 + 4, 27*8 + 4, 33*8 + 4, GL_BLUE);
-    gl_draw_line(4, 33*8 + 4, 27*8 + 4, 33*8 + 4, GL_BLUE);
+    gl_draw_line(HALF_TILE, 3*TILE_WIDTH + HALF_TILE, 13*8 + HALF_TILE, 3*8 + HALF_TILE, GL_BLUE);
+    gl_draw_line(14*TILE_WIDTH + HALF_TILE, 3*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, 3*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(14*TILE_WIDTH + HALF_TILE, 3*TILE_WIDTH + HALF_TILE, 14*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(13*TILE_WIDTH + HALF_TILE, 3*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(13*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, 14*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(HALF_TILE, 3*TILE_WIDTH + HALF_TILE, HALF_TILE, 12*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(27*TILE_WIDTH + HALF_TILE, 3*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(HALF_TILE, 12*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(22*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(5*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(22*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(0, 16*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(22*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, gl_get_width(), 16*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(0, 18*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 18*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(22*TILE_WIDTH + HALF_TILE, 18*TILE_WIDTH + HALF_TILE, gl_get_width(), 18*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(5*TILE_WIDTH + HALF_TILE, 18*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(22*TILE_WIDTH + HALF_TILE, 18*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(HALF_TILE, 22*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(22*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(HALF_TILE, 22*TILE_WIDTH + HALF_TILE, HALF_TILE, 27*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(27*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(HALF_TILE, 27*TILE_WIDTH + HALF_TILE, 2*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(25*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(2*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, 2*TILE_WIDTH + HALF_TILE, 28*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(25*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, 25*TILE_WIDTH + HALF_TILE, 28*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(HALF_TILE, 28*TILE_WIDTH + HALF_TILE, 2*TILE_WIDTH + HALF_TILE, 28*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(25*TILE_WIDTH + HALF_TILE, 28*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, 28*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(HALF_TILE, 28*TILE_WIDTH + HALF_TILE, HALF_TILE, 33*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(27*TILE_WIDTH + HALF_TILE, 28*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, 33*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(HALF_TILE, 33*TILE_WIDTH + HALF_TILE, 27*TILE_WIDTH + HALF_TILE, 33*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
     //These are the top 4 rectangles on the board (left to right)
-    gl_draw_line(2*8 + 4, 5*8 + 4, 5*8 + 4, 5*8 + 4, GL_BLUE);
-    gl_draw_line(2*8 + 4, 5*8 + 4, 2*8 + 4, 7*8 + 4, GL_BLUE);
-    gl_draw_line(2*8 + 4, 7*8 + 4, 5*8 + 4, 7*8 + 4, GL_BLUE);
-    gl_draw_line(5*8 + 4, 5*8 + 4, 5*8 + 4, 7*8 + 4, GL_BLUE);
+    gl_draw_line(2*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(2*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 2*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(2*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(5*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
-    gl_draw_line(7*8 + 4, 5*8 + 4, 11*8 + 4, 5*8 + 4, GL_BLUE);
-    gl_draw_line(7*8 + 4, 5*8 + 4, 7*8 + 4, 7*8 + 4, GL_BLUE);
-    gl_draw_line(7*8 + 4, 7*8 + 4, 11*8 + 4, 7*8 + 4, GL_BLUE);
-    gl_draw_line(11*8 + 4, 5*8 + 4, 11*8 + 4, 7*8 + 4, GL_BLUE);
+    gl_draw_line(7*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 11*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(7*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(7*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, 11*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(11*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 11*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
-    gl_draw_line(16*8 + 4, 5*8 + 4, 20*8 + 4, 5*8 + 4, GL_BLUE);
-    gl_draw_line(16*8 + 4, 5*8 + 4, 16*8 + 4, 7*8 + 4, GL_BLUE);
-    gl_draw_line(16*8 + 4, 7*8 + 4, 20*8 + 4, 7*8 + 4, GL_BLUE);
-    gl_draw_line(20*8 + 4, 5*8 + 4, 20*8 + 4, 7*8 + 4, GL_BLUE);
+    gl_draw_line(16*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 20*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(16*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(16*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, 20*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(20*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 20*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
-    gl_draw_line(22*8 + 4, 5*8 + 4, 25*8 + 4, 5*8 + 4, GL_BLUE);
-    gl_draw_line(22*8 + 4, 5*8 + 4, 22*8 + 4, 7*8 + 4, GL_BLUE);
-    gl_draw_line(22*8 + 4, 7*8 + 4, 25*8 + 4, 7*8 + 4, GL_BLUE);
-    gl_draw_line(25*8 + 4, 5*8 + 4, 25*8 + 4, 7*8 + 4, GL_BLUE);
+    gl_draw_line(22*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 25*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(22*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(22*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, 25*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(25*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 25*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
     //These are the next 5 internal shapes (left to right)
-    gl_draw_line(2*8 + 4, 9*8 + 4, 5*8 + 4, 9*8 + 4, GL_BLUE);
-    gl_draw_line(2*8 + 4, 9*8 + 4, 2*8 + 4, 10*8 + 4, GL_BLUE);
-    gl_draw_line(2*8 + 4, 10*8 + 4, 5*8 + 4, 10*8 + 4, GL_BLUE);
-    gl_draw_line(5*8 + 4, 9*8 + 4, 5*8 + 4, 10*8 + 4, GL_BLUE);
+    gl_draw_line(2*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(2*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 2*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(2*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(5*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 5*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
-    gl_draw_line(7*8 + 4, 9*8 + 4, 8*8 + 4, 9*8 + 4, GL_BLUE);
-    gl_draw_line(7*8 + 4, 9*8 + 4, 7*8 + 4, 16*8 + 4, GL_BLUE);
-    gl_draw_line(7*8 + 4, 16*8 + 4, 8*8 + 4, 16*8 + 4, GL_BLUE);
-    gl_draw_line(8*8 + 4, 9*8 + 4, 8*8 + 4, 12*8 + 4, GL_BLUE);
-    gl_draw_line(8*8 + 4, 13*8 + 4, 8*8 + 4, 16*8 + 4, GL_BLUE);
-    gl_draw_line(8*8 + 4, 12*8 + 4, 11*8 + 4, 12*8 + 4, GL_BLUE);
-    gl_draw_line(8*8 + 4, 13*8 + 4, 11*8 + 4, 13*8 + 4, GL_BLUE);
-    gl_draw_line(11*8 + 4, 12*8 + 4, 11*8 + 4, 13*8 + 4, GL_BLUE);
+    gl_draw_line(7*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 8*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(7*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(7*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, 8*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(8*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 8*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(8*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, 8*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(8*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, 11*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(8*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, 11*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(11*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, 11*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
-    gl_draw_line(10*8 + 4, 9*8 + 4, 17*8 + 4, 9*8 + 4, GL_BLUE);
-    gl_draw_line(10*8 + 4, 9*8 + 4, 10*8 + 4, 10*8 + 4, GL_BLUE);
-    gl_draw_line(10*8 + 4, 10*8 + 4, 13*8 + 4, 10*8 + 4, GL_BLUE);
-    gl_draw_line(14*8 + 4, 10*8 + 4, 17*8 + 4, 10*8 + 4, GL_BLUE);
-    gl_draw_line(17*8 + 4, 9*8 + 4, 17*8 + 4, 10*8 + 4, GL_BLUE);
-    gl_draw_line(13*8 + 4, 10*8 + 4, 13*8 + 4, 13*8 + 4, GL_BLUE);
-    gl_draw_line(14*8 + 4, 10*8 + 4, 14*8 + 4, 13*8 + 4, GL_BLUE);
-    gl_draw_line(13*8 + 4, 13*8 + 4, 14*8 + 4, 13*8 + 4, GL_BLUE);
+    gl_draw_line(10*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 17*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(10*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(10*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(14*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, 17*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(17*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 17*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(13*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(14*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, 14*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(13*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, 14*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
-    gl_draw_line(19*8 + 4, 9*8 + 4, 20*8 + 4, 9*8 + 4, GL_BLUE);
-    gl_draw_line(20*8 + 4, 9*8 + 4, 20*8 + 4, 16*8 + 4, GL_BLUE);
-    gl_draw_line(19*8 + 4, 16*8 + 4, 20*8 + 4, 16*8 + 4, GL_BLUE);
-    gl_draw_line(19*8 + 4, 9*8 + 4, 19*8 + 4, 12*8 + 4, GL_BLUE);
-    gl_draw_line(19*8 + 4, 13*8 + 4, 19*8 + 4, 16*8 + 4, GL_BLUE);
-    gl_draw_line(16*8 + 4, 12*8 + 4, 19*8 + 4, 12*8 + 4, GL_BLUE);
-    gl_draw_line(16*8 + 4, 13*8 + 4, 19*8 + 4, 13*8 + 4, GL_BLUE);
-    gl_draw_line(16*8 + 4, 12*8 + 4, 16*8 + 4, 13*8 + 4, GL_BLUE);
+    gl_draw_line(19*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 20*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(20*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 20*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(19*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, 20*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(19*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 19*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(19*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, 19*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(16*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, 19*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(16*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, 19*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(16*TILE_WIDTH + HALF_TILE, 12*TILE_WIDTH + HALF_TILE, 16*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
-    gl_draw_line(22*8 + 4, 9*8 + 4, 25*8 + 4, 9*8 + 4, GL_BLUE);
-    gl_draw_line(22*8 + 4, 9*8 + 4, 22*8 + 4, 10*8 + 4, GL_BLUE);
-    gl_draw_line(22*8 + 4, 10*8 + 4, 25*8 + 4, 10*8 + 4, GL_BLUE);
-    gl_draw_line(25*8 + 4, 9*8 + 4, 25*8 + 4, 10*8 + 4, GL_BLUE);
+    gl_draw_line(22*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 25*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(22*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(22*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, 25*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(25*TILE_WIDTH + HALF_TILE, 9*TILE_WIDTH + HALF_TILE, 25*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
     //This is the ghost prison box
-    gl_draw_line(10*8 + 4, 15*8 + 4, 13*8, 15*8 + 4, GL_BLUE);
-    gl_draw_line(15*8, 15*8 + 4, 17*8 + 4, 15*8 + 4, GL_BLUE);
-    gl_draw_line(13*8, 15*8 + 4, 15*8, 15*8 + 4, GL_CYAN);
-    gl_draw_line(10*8 + 4, 15*8 + 4, 10*8 + 4, 19*8 + 4, GL_BLUE);
-    gl_draw_line(10*8 + 4, 19*8 + 4, 17*8 + 4, 19*8 + 4, GL_BLUE);
-    gl_draw_line(17*8 + 4, 15*8 + 4, 17*8 + 4, 19*8 + 4, GL_BLUE);
+    gl_draw_line(10*TILE_WIDTH + HALF_TILE, 15*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH, 15*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(15*TILE_WIDTH, 15*TILE_WIDTH + HALF_TILE, 17*TILE_WIDTH + HALF_TILE, 15*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(13*TILE_WIDTH, 15*TILE_WIDTH + 4, 15*TILE_WIDTH, 15*TILE_WIDTH + 4, GL_CYAN);
+    gl_draw_line(10*TILE_WIDTH + HALF_TILE, 15*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, 19*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(10*TILE_WIDTH + HALF_TILE, 19*TILE_WIDTH + HALF_TILE, 17*TILE_WIDTH + HALF_TILE, 19*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(17*TILE_WIDTH + HALF_TILE, 15*TILE_WIDTH + HALF_TILE, 17*TILE_WIDTH + HALF_TILE, 19*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
     //These are the next three shapes (left to right)
-    gl_draw_line(7*8 + 4, 18*8 + 4, 8*8 + 4, 18*8 + 4, GL_BLUE);
-    gl_draw_line(7*8 + 4, 18*8 + 4, 7*8 + 4, 22*8 + 4, GL_BLUE);
-    gl_draw_line(7*8 + 4, 22*8 + 4, 8*8 + 4, 22*8 + 4, GL_BLUE);
-    gl_draw_line(8*8 + 4, 18*8 + 4, 8*8 + 4, 22*8 + 4, GL_BLUE);
+    gl_draw_line(7*TILE_WIDTH + HALF_TILE, 18*TILE_WIDTH + HALF_TILE, 8*TILE_WIDTH + HALF_TILE, 18*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(7*TILE_WIDTH + HALF_TILE, 18*TILE_WIDTH + HALF_TILE, 7*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(7*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, 8*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(8*TILE_WIDTH + HALF_TILE, 18*TILE_WIDTH + HALF_TILE, 8*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
-    gl_draw_line(10*8 + 4, 21*8 + 4, 17*8 + 4, 21*8 + 4, GL_BLUE);
-    gl_draw_line(10*8 + 4, 21*8 + 4, 10*8 + 4, 22*8 + 4, GL_BLUE);
-    gl_draw_line(10*8 + 4, 22*8 + 4, 13*8 + 4, 22*8 + 4, GL_BLUE);
-    gl_draw_line(14*8 + 4, 22*8 + 4, 17*8 + 4, 22*8 + 4, GL_BLUE);
-    gl_draw_line(17*8 + 4, 21*8 + 4, 17*8 + 4, 22*8 + 4, GL_BLUE);
-    gl_draw_line(13*8 + 4, 22*8 + 4, 13*8 + 4, 25*8 + 4, GL_BLUE);
-    gl_draw_line(14*8 + 4, 22*8 + 4, 14*8 + 4, 25*8 + 4, GL_BLUE);
-    gl_draw_line(13*8 + 4, 25*8 + 4, 14*8 + 4, 25*8 + 4, GL_BLUE);
+    gl_draw_line(10*TILE_WIDTH + HALF_TILE, 21*TILE_WIDTH + HALF_TILE, 17*TILE_WIDTH + HALF_TILE, 21*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(10*TILE_WIDTH + HALF_TILE, 21*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(10*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(14*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, 17*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(17*TILE_WIDTH + HALF_TILE, 21*TILE_WIDTH + HALF_TILE, 17*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(13*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH + HALF_TILE, 25*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(14*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, 14*TILE_WIDTH + HALF_TILE, 25*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(13*TILE_WIDTH + HALF_TILE, 25*TILE_WIDTH + HALF_TILE, 14*TILE_WIDTH + HALF_TILE, 25*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
-    gl_draw_line(19*8 + 4, 18*8 + 4, 20*8 + 4, 18*8 + 4, GL_BLUE);
-    gl_draw_line(19*8 + 4, 18*8 + 4, 19*8 + 4, 22*8 + 4, GL_BLUE);
-    gl_draw_line(19*8 + 4, 22*8 + 4, 20*8 + 4, 22*8 + 4, GL_BLUE);
-    gl_draw_line(20*8 + 4, 18*8 + 4, 20*8 + 4, 22*8 + 4, GL_BLUE);
+    gl_draw_line(19*TILE_WIDTH + HALF_TILE, 18*TILE_WIDTH + HALF_TILE, 20*TILE_WIDTH + HALF_TILE, 18*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(19*TILE_WIDTH + HALF_TILE, 18*TILE_WIDTH + HALF_TILE, 19*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(19*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, 20*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
+    gl_draw_line(20*TILE_WIDTH + HALF_TILE, 18*TILE_WIDTH + HALF_TILE, 20*TILE_WIDTH + HALF_TILE, 22*TILE_WIDTH + HALF_TILE, GL_BLUE);
 
     //These are the next 4 shapes
     gl_draw_line(2*8 + 4, 24*8 + 4, 5*8 + 4, 24*8 + 4, GL_BLUE);
@@ -207,5 +214,6 @@ void draw_dots() {
     gl_draw_rect(26*8, 6*8, 8, 8, superDotColor);
     gl_draw_rect(8, 26*8, 8, 8, superDotColor);
     gl_draw_rect(26*8, 26*8, 8, 8, superDotColor);
+    numDots = 244;
 }
 

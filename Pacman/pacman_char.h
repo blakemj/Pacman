@@ -5,7 +5,7 @@
 
 void pacman_init();
 
-int numDots;
+void erase_pacman();
 
 void pacman_move();
 
@@ -14,5 +14,9 @@ int check_sides(int x, int y, unsigned char direction, color_t color);
 int pacman_get_x();
 
 int pacman_get_y();
+
+int pacman_hit_ghost();
+
+unsigned char pacman_get_curMove();
 
 #endif

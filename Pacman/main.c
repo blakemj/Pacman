@@ -8,17 +8,24 @@
 
 void main(void) 
 {
-  while (1) {
-      board_init();
-      draw_dots();
+  int lives = 3;
+  board_init();
+  draw_dots();
+  while (lives) {
       pacman_init();
       ghosts_init();
       gl_swap_buffer();
       timer_delay(3);
-      while(numDots - 4) {
+      while(numDots - 4 && !pacman_hit_ghost()) {
           pacman_move();
           blinky_move();
+          pinky_move();
           gl_swap_buffer();
       }
+      erase_blinky();
+      erase_pinky();
+      erase_pacman();
+      if (pacman_hit_ghost()) lives--;
+      if (!(numDots - 4)) draw_dots();
   }
 }
