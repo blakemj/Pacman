@@ -7,12 +7,14 @@
 
 void main(void) 
 {
-  board_init();
-  draw_dots();
-  pacman_init();
-  gl_swap_buffer();
-  timer_delay(3);
-  while(1) {
-      pacman_move();
+  while (1) {
+      board_init();
+      draw_dots();
+      pacman_init();
+      gl_swap_buffer();
+      timer_delay(3);
+      while(numDots - 4) {
+          pacman_move();
+      }
   }
 }

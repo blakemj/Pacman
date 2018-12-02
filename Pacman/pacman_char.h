@@ -3,6 +3,8 @@
 
 void pacman_init();
 
+int numDots;
+
 void pacman_move();
 
 #endif

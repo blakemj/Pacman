@@ -10,7 +10,7 @@
 static int xCoord;
 static int yCoord;
 
-static int numDots;
+int numDots;
 
 static void draw_pacman() {
     gl_draw_circle(xCoord, yCoord, pacman_width, pacman_width, GL_YELLOW);
