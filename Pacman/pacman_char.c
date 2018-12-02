@@ -10,6 +10,14 @@
 static int xCoord;
 static int yCoord;
 
+int pacman_get_x() {
+    return xCoord;
+}
+
+int pacman_get_y() {
+    return yCoord;
+}
+
 int numDots;
 
 static void draw_pacman() {
@@ -31,23 +39,23 @@ void pacman_init() {
 static unsigned char nextMove = 'r';
 static unsigned char curMove = 'r';
 
-static int check_sides(unsigned char direction, color_t color) {
+int check_sides(int x, int y, unsigned char direction, color_t color) {
     int side_hit = 0;
-    if (direction == 'r' && gl_read_pixel(xCoord + 1 + 2*8 - 2, yCoord) == color) side_hit = 1;
-    if (direction == 'r' && gl_read_pixel(xCoord + 1 + 2*8 - 2, yCoord + 2*8 - 2) == color) side_hit = 1;
-    if (direction == 'r' && gl_read_pixel(xCoord + 1 + 2*8 - 2, yCoord + 8 - 1) == color) side_hit = 1;
-    if (direction == 'l' && gl_read_pixel(xCoord - 1, yCoord) == color) side_hit = 1;
-    if (direction == 'l' && gl_read_pixel(xCoord - 1, yCoord + 2*8 - 2) == color) side_hit = 1;
-    if (direction == 'l' && gl_read_pixel(xCoord - 1, yCoord + 8 - 1) == color) side_hit = 1;
-    if (direction == 'u' && gl_read_pixel(xCoord, yCoord - 1) == color) side_hit = 1;
-    if (direction == 'u' && gl_read_pixel(xCoord + 2*8 - 2, yCoord - 1) == color) side_hit = 1;
-    if (direction == 'u' && gl_read_pixel(xCoord + 8 - 1, yCoord - 1) == color) side_hit = 1;
-    if (direction == 'd' && gl_read_pixel(xCoord, yCoord + 1 + 2*8 - 2) == color) side_hit = 1;
-    if (direction == 'd' && gl_read_pixel(xCoord + 2*8 - 2, yCoord + 1 + 2*8 - 2) == color) side_hit = 1;
-    if (direction == 'd' && gl_read_pixel(xCoord + 8 - 1, yCoord + 1 + 2*8 - 2) == color) side_hit = 1;
-    if (color == GL_BLUE && direction == 'd' && gl_read_pixel(xCoord, yCoord + 1 + 2*8 - 2) == GL_CYAN) side_hit = 1;
-    if (color == GL_BLUE && direction == 'd' && gl_read_pixel(xCoord + 2*8 - 2, yCoord + 1 + 2*8 - 2) == GL_CYAN) side_hit = 1;
-    if (color == GL_BLUE && direction == 'd' && gl_read_pixel(xCoord + 8 - 1, yCoord + 1 + 2*8 - 2) == GL_CYAN) side_hit = 1;
+    if (direction == 'r' && gl_read_pixel(x + 1 + 2*8 - 2, y) == color) side_hit = 1;
+    if (direction == 'r' && gl_read_pixel(x + 1 + 2*8 - 2, y + 2*8 - 2) == color) side_hit = 1;
+    if (direction == 'r' && gl_read_pixel(x + 1 + 2*8 - 2, y + 8 - 1) == color) side_hit = 1;
+    if (direction == 'l' && gl_read_pixel(x - 1, y) == color) side_hit = 1;
+    if (direction == 'l' && gl_read_pixel(x - 1, y + 2*8 - 2) == color) side_hit = 1;
+    if (direction == 'l' && gl_read_pixel(x - 1, y + 8 - 1) == color) side_hit = 1;
+    if (direction == 'u' && gl_read_pixel(x, y - 1) == color) side_hit = 1;
+    if (direction == 'u' && gl_read_pixel(x + 2*8 - 2, y - 1) == color) side_hit = 1;
+    if (direction == 'u' && gl_read_pixel(x + 8 - 1, y - 1) == color) side_hit = 1;
+    if (direction == 'd' && gl_read_pixel(x, y + 1 + 2*8 - 2) == color) side_hit = 1;
+    if (direction == 'd' && gl_read_pixel(x + 2*8 - 2, y + 1 + 2*8 - 2) == color) side_hit = 1;
+    if (direction == 'd' && gl_read_pixel(x + 8 - 1, y + 1 + 2*8 - 2) == color) side_hit = 1;
+    if (color == GL_BLUE && direction == 'd' && gl_read_pixel(x, y + 1 + 2*8 - 2) == GL_CYAN) side_hit = 1;
+    if (color == GL_BLUE && direction == 'd' && gl_read_pixel(x + 2*8 - 2, y + 1 + 2*8 - 2) == GL_CYAN) side_hit = 1;
+    if (color == GL_BLUE && direction == 'd' && gl_read_pixel(x + 8 - 1, y + 1 + 2*8 - 2) == GL_CYAN) side_hit = 1;
     return side_hit;
 }
 
@@ -64,18 +72,17 @@ void pacman_move() {
         nextMove = 'd';
     }
     for (int i = 0; i < 5; i++) {
-        if (nextMove == 'r' && !check_sides('r', GL_BLUE)) curMove = 'r';
-        if (nextMove == 'l' && !check_sides('l', GL_BLUE)) curMove = 'l';
-        if (nextMove == 'u' && !check_sides('u', GL_BLUE)) curMove = 'u';
-        if (nextMove == 'd' && !check_sides('d', GL_BLUE)) curMove = 'd';
-        if (check_sides(curMove, GL_WHITE)) numDots--;
-        if (curMove == 'r' && !check_sides('r', GL_BLUE)) xCoord = xCoord + 1;
-        if (curMove == 'l' && !check_sides('l', GL_BLUE)) xCoord = xCoord - 1;
-        if (curMove == 'u' && !check_sides('u', GL_BLUE)) yCoord = yCoord - 1;
-        if (curMove == 'd' && !check_sides('d', GL_BLUE)) yCoord = yCoord + 1;
+        if (nextMove == 'r' && !check_sides(xCoord, yCoord, 'r', GL_BLUE)) curMove = 'r';
+        if (nextMove == 'l' && !check_sides(xCoord, yCoord, 'l', GL_BLUE)) curMove = 'l';
+        if (nextMove == 'u' && !check_sides(xCoord, yCoord, 'u', GL_BLUE)) curMove = 'u';
+        if (nextMove == 'd' && !check_sides(xCoord, yCoord, 'd', GL_BLUE)) curMove = 'd';
+        if (check_sides(xCoord, yCoord, curMove, GL_WHITE)) numDots--;
+        if (curMove == 'r' && !check_sides(xCoord, yCoord, 'r', GL_BLUE)) xCoord = xCoord + 1;
+        if (curMove == 'l' && !check_sides(xCoord, yCoord, 'l', GL_BLUE)) xCoord = xCoord - 1;
+        if (curMove == 'u' && !check_sides(xCoord, yCoord, 'u', GL_BLUE)) yCoord = yCoord - 1;
+        if (curMove == 'd' && !check_sides(xCoord, yCoord, 'd', GL_BLUE)) yCoord = yCoord + 1;
         if (xCoord <= 0) xCoord = gl_get_width() - 1;
         if (xCoord >= gl_get_width()) xCoord = 1;
     }
     draw_pacman();
-    gl_swap_buffer();
 }
