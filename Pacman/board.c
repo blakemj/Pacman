@@ -1,8 +1,6 @@
 #include "gl.h"
 #include "board.h"
-#include "printf.h"
-#include "font.h"
-#include <stdarg.h>
+#include "gl_more.h"
 
 #define BOARD_WIDTH 224
 #define BOARD_HEIGHT 288
@@ -212,22 +210,10 @@ void draw_dots() {
     }
     gl_draw_pixel(12*8 + 4, 6*8 + 4, GL_WHITE);
     gl_draw_pixel(15*8 + 4, 6*8 + 4, GL_WHITE);
-    color_t superDotColor = gl_color(0xff, 0xff, 0xe5);
-    gl_draw_rect(8, 6*8, 8, 8, superDotColor);
-    gl_draw_rect(26*8, 6*8, 8, 8, superDotColor);
-    gl_draw_rect(8, 26*8, 8, 8, superDotColor);
-    gl_draw_rect(26*8, 26*8, 8, 8, superDotColor);
+    gl_draw_rect(8, 6*8, 8, 8, GL_OFFWHITE);
+    gl_draw_rect(26*8, 6*8, 8, 8, GL_OFFWHITE);
+    gl_draw_rect(8, 26*8, 8, 8, GL_OFFWHITE);
+    gl_draw_rect(26*8, 26*8, 8, 8, GL_OFFWHITE);
     numDots = 244;
 }
 
-#define INIT_BUFFER_LENGTH 10
-
-void display_score(const char *format, ...) {
-    char buf[INIT_BUFFER_LENGTH];
-    va_list args;
-    va_start(args, format);
-    vsnprintf(buf, INIT_BUFFER_LENGTH, format, args);
-    gl_draw_string(8, 1, buf, GL_WHITE);
-    gl_swap_buffer();
-    va_end(args);
-}

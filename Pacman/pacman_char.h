@@ -19,4 +19,8 @@ int pacman_hit_ghost();
 
 unsigned char pacman_get_curMove();
 
+int superDotBonus;
+int frightened_points;
+int frightenedPointsNotAdded;
+
 #endif

@@ -18,6 +18,7 @@ void main(void)
   int charWidth = gl_get_char_width();
   int charHeight = gl_get_char_height();
   int lives = 3;
+  int frightenedBonus = 0;
   board_init();
   draw_dots();
   while (lives) {
@@ -31,8 +32,12 @@ void main(void)
           pinky_move();
           inky_move();
           clyde_move();
+          if (frightenedPointsNotAdded) {
+              frightenedBonus = frightenedBonus + frightened_points;
+              frightenedPointsNotAdded = 0;
+          }
           for (int i = 0; i < 9; i++) {
-              gl_draw_char(i*charWidth + 8, 1, divide(i, 244 - numDots) % 10 + 48, GL_WHITE);
+              gl_draw_char(i*charWidth + 8, 1, divide(i, 244 - numDots + superDotBonus + frightenedBonus) % 10 + 48, GL_WHITE);
           }
           gl_swap_buffer();
           gl_draw_rect(8, 1, 9*charWidth, charHeight, GL_BLACK);

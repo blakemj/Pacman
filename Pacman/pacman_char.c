@@ -5,6 +5,7 @@
 #include "gl_more.h"
 #include "printf.h"
 #include "board.h"
+#include "ghosts.h"
 
 #define pacman_width 2*8 - 2
 
@@ -12,6 +13,10 @@ static int xCoord;
 static int yCoord;
 
 static int ghostHit;
+
+int frightened_points;
+int superDotBonus;
+int frightenedPointsNotAdded;
 
 int pacman_hit_ghost() {
     return ghostHit;
@@ -43,6 +48,8 @@ void pacman_init() {
     ghostHit = 0;
     curMove = 'r';
     nextMove = 'r';
+    superDotBonus = 0;
+    frightenedPointsNotAdded = 0;
     draw_pacman(); 
 }
 
@@ -82,7 +89,7 @@ void pacman_move() {
     } else if (userTyped == PS2_KEY_ARROW_DOWN) {
         nextMove = 'd';
     }
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 6; i++) {
         if (nextMove == 'r' && !check_sides(xCoord, yCoord, 'r', GL_BLUE)) curMove = 'r';
         if (nextMove == 'l' && !check_sides(xCoord, yCoord, 'l', GL_BLUE)) curMove = 'l';
         if (nextMove == 'u' && !check_sides(xCoord, yCoord, 'u', GL_BLUE)) curMove = 'u';
@@ -104,6 +111,40 @@ void pacman_move() {
         if (check_sides(xCoord, yCoord, 'r', GL_AMBER)) ghostHit = 1;
         if (check_sides(xCoord, yCoord, 'u', GL_AMBER)) ghostHit = 1;
         if (check_sides(xCoord, yCoord, 'd', GL_AMBER)) ghostHit = 1;
+        if (check_sides(xCoord, yCoord, 'l', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'r', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'u', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'd', GL_OFFWHITE)) {
+            frightened = 1;
+            frightened_start = timer_get_ticks();
+            blinky_to_center = 1;
+            pinky_to_center = 1;
+            inky_to_center = 1;
+            clyde_to_center = 1;
+            superDotBonus++;
+        }
+        if (!frightened) frightened_points = 10;
+        if (check_sides(xCoord, yCoord, 'l', GL_PURPLE1) || check_sides(xCoord, yCoord, 'r', GL_PURPLE1) || check_sides(xCoord, yCoord, 'u', GL_PURPLE1) || check_sides(xCoord, yCoord, 'd', GL_PURPLE1)) {
+            blinky_caught = 1;
+            frightenedPointsNotAdded = 1;
+            frightened_points = frightened_points + 10;
+            break;
+        }
+        if (check_sides(xCoord, yCoord, 'l', GL_PURPLE2) || check_sides(xCoord, yCoord, 'r', GL_PURPLE2) || check_sides(xCoord, yCoord, 'u', GL_PURPLE2) || check_sides(xCoord, yCoord, 'd', GL_PURPLE2)) {
+            pinky_caught = 1;
+            frightenedPointsNotAdded = 1;
+            frightened_points = frightened_points + 10;
+            break;
+        }
+        if (check_sides(xCoord, yCoord, 'l', GL_PURPLE3) || check_sides(xCoord, yCoord, 'r', GL_PURPLE3) || check_sides(xCoord, yCoord, 'u', GL_PURPLE3) || check_sides(xCoord, yCoord, 'd', GL_PURPLE3)) {
+            inky_caught = 1;
+            frightenedPointsNotAdded = 1;
+            frightened_points = frightened_points + 10;
+            break;
+        }
+        if (check_sides(xCoord, yCoord, 'l', GL_PURPLE4) || check_sides(xCoord, yCoord, 'r', GL_PURPLE4) || check_sides(xCoord, yCoord, 'u', GL_PURPLE4) || check_sides(xCoord, yCoord, 'd', GL_PURPLE4)) {
+            clyde_caught = 1;
+            frightenedPointsNotAdded = 1;
+            frightened_points = frightened_points + 10;
+            break;
+        }
         if (curMove == 'r' && !check_sides(xCoord, yCoord, 'r', GL_BLUE)) xCoord = xCoord + 1;
         if (curMove == 'l' && !check_sides(xCoord, yCoord, 'l', GL_BLUE)) xCoord = xCoord - 1;
         if (curMove == 'u' && !check_sides(xCoord, yCoord, 'u', GL_BLUE)) yCoord = yCoord - 1;
