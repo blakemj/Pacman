@@ -114,10 +114,6 @@ void pacman_move() {
         if (check_sides(xCoord, yCoord, 'l', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'r', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'u', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'd', GL_OFFWHITE)) {
             frightened = 1;
             frightened_start = timer_get_ticks();
-            blinky_to_center = 1;
-            pinky_to_center = 1;
-            inky_to_center = 1;
-            clyde_to_center = 1;
             superDotBonus++;
         }
         if (!frightened) frightened_points = 10;

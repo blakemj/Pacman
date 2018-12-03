@@ -13,6 +13,8 @@ static int divide(int numTens, int divider) {
     return divider;
 }
 
+static int total_score;
+
 void main(void) 
 {
   int charWidth = gl_get_char_width();
@@ -21,6 +23,7 @@ void main(void)
   int frightenedBonus = 0;
   board_init();
   draw_dots();
+  int prevScore = 0;
   while (lives) {
       pacman_init();
       ghosts_init();
@@ -36,8 +39,9 @@ void main(void)
               frightenedBonus = frightenedBonus + frightened_points;
               frightenedPointsNotAdded = 0;
           }
+          total_score = prevScore + 244 - numDots + superDotBonus + frightenedBonus;
           for (int i = 0; i < 9; i++) {
-              gl_draw_char(i*charWidth + 8, 1, divide(i, 244 - numDots + superDotBonus + frightenedBonus) % 10 + 48, GL_WHITE);
+              gl_draw_char(i*charWidth + 8, 1, divide(i, total_score) % 10 + 48, GL_WHITE);
           }
           gl_swap_buffer();
           gl_draw_rect(8, 1, 9*charWidth, charHeight, GL_BLACK);
@@ -47,6 +51,7 @@ void main(void)
       erase_inky();
       erase_clyde();
       erase_pacman();
+      prevScore = total_score;
       if (pacman_hit_ghost()) lives--;
       if (!(numDots - 4)) draw_dots();
   }
