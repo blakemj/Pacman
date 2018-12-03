@@ -1,5 +1,8 @@
 #include "gl.h"
 #include "board.h"
+#include "printf.h"
+#include "font.h"
+#include <stdarg.h>
 
 #define BOARD_WIDTH 224
 #define BOARD_HEIGHT 288
@@ -105,7 +108,7 @@ void board_init() {
     //This is the ghost prison box
     gl_draw_line(10*TILE_WIDTH + HALF_TILE, 15*TILE_WIDTH + HALF_TILE, 13*TILE_WIDTH, 15*TILE_WIDTH + HALF_TILE, GL_BLUE);
     gl_draw_line(15*TILE_WIDTH, 15*TILE_WIDTH + HALF_TILE, 17*TILE_WIDTH + HALF_TILE, 15*TILE_WIDTH + HALF_TILE, GL_BLUE);
-    gl_draw_line(13*TILE_WIDTH, 15*TILE_WIDTH + 4, 15*TILE_WIDTH, 15*TILE_WIDTH + 4, GL_CYAN);
+    gl_draw_line(13*TILE_WIDTH, 15*TILE_WIDTH + 4, 15*TILE_WIDTH, 15*TILE_WIDTH + 4, GL_GREEN);
     gl_draw_line(10*TILE_WIDTH + HALF_TILE, 15*TILE_WIDTH + HALF_TILE, 10*TILE_WIDTH + HALF_TILE, 19*TILE_WIDTH + HALF_TILE, GL_BLUE);
     gl_draw_line(10*TILE_WIDTH + HALF_TILE, 19*TILE_WIDTH + HALF_TILE, 17*TILE_WIDTH + HALF_TILE, 19*TILE_WIDTH + HALF_TILE, GL_BLUE);
     gl_draw_line(17*TILE_WIDTH + HALF_TILE, 15*TILE_WIDTH + HALF_TILE, 17*TILE_WIDTH + HALF_TILE, 19*TILE_WIDTH + HALF_TILE, GL_BLUE);
@@ -217,3 +220,14 @@ void draw_dots() {
     numDots = 244;
 }
 
+#define INIT_BUFFER_LENGTH 10
+
+void display_score(const char *format, ...) {
+    char buf[INIT_BUFFER_LENGTH];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buf, INIT_BUFFER_LENGTH, format, args);
+    gl_draw_string(8, 1, buf, GL_WHITE);
+    gl_swap_buffer();
+    va_end(args);
+}

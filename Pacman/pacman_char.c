@@ -64,9 +64,9 @@ int check_sides(int x, int y, unsigned char direction, color_t color) {
     if (direction == 'd' && gl_read_pixel(x, y + 1 + 2*8 - 2) == color) side_hit = 1;
     if (direction == 'd' && gl_read_pixel(x + 2*8 - 2, y + 1 + 2*8 - 2) == color) side_hit = 1;
     if (direction == 'd' && gl_read_pixel(x + 8 - 1, y + 1 + 2*8 - 2) == color) side_hit = 1;
-    if (color == GL_BLUE && direction == 'd' && gl_read_pixel(x, y + 1 + 2*8 - 2) == GL_CYAN) side_hit = 1;
-    if (color == GL_BLUE && direction == 'd' && gl_read_pixel(x + 2*8 - 2, y + 1 + 2*8 - 2) == GL_CYAN) side_hit = 1;
-    if (color == GL_BLUE && direction == 'd' && gl_read_pixel(x + 8 - 1, y + 1 + 2*8 - 2) == GL_CYAN) side_hit = 1;
+    if (color == GL_BLUE && direction == 'd' && gl_read_pixel(x, y + 1 + 2*8 - 2) == GL_GREEN) side_hit = 1;
+    if (color == GL_BLUE && direction == 'd' && gl_read_pixel(x + 2*8 - 2, y + 1 + 2*8 - 2) == GL_GREEN) side_hit = 1;
+    if (color == GL_BLUE && direction == 'd' && gl_read_pixel(x + 8 - 1, y + 1 + 2*8 - 2) == GL_GREEN) side_hit = 1;
     return side_hit;
 }
 
@@ -96,6 +96,14 @@ void pacman_move() {
         if (check_sides(xCoord, yCoord, 'r', GL_MAGENTA)) ghostHit = 1;
         if (check_sides(xCoord, yCoord, 'u', GL_MAGENTA)) ghostHit = 1;
         if (check_sides(xCoord, yCoord, 'd', GL_MAGENTA)) ghostHit = 1;
+        if (check_sides(xCoord, yCoord, 'l', GL_CYAN)) ghostHit = 1;
+        if (check_sides(xCoord, yCoord, 'r', GL_CYAN)) ghostHit = 1;
+        if (check_sides(xCoord, yCoord, 'u', GL_CYAN)) ghostHit = 1;
+        if (check_sides(xCoord, yCoord, 'd', GL_CYAN)) ghostHit = 1;
+        if (check_sides(xCoord, yCoord, 'l', GL_AMBER)) ghostHit = 1;
+        if (check_sides(xCoord, yCoord, 'r', GL_AMBER)) ghostHit = 1;
+        if (check_sides(xCoord, yCoord, 'u', GL_AMBER)) ghostHit = 1;
+        if (check_sides(xCoord, yCoord, 'd', GL_AMBER)) ghostHit = 1;
         if (curMove == 'r' && !check_sides(xCoord, yCoord, 'r', GL_BLUE)) xCoord = xCoord + 1;
         if (curMove == 'l' && !check_sides(xCoord, yCoord, 'l', GL_BLUE)) xCoord = xCoord - 1;
         if (curMove == 'u' && !check_sides(xCoord, yCoord, 'u', GL_BLUE)) yCoord = yCoord - 1;
