@@ -6,6 +6,8 @@
 #include "printf.h"
 #include "board.h"
 #include "ghosts.h"
+#include "nes.h"
+
 
 #define pacman_width (2*8 - 2)
 
@@ -141,7 +143,7 @@ static void check_for_dots() {
     }
 }
 
-static void user_set_direction() {
+static void user_set_direction_keyboard() {
     unsigned char userTyped = pacman_keyboard_read_next();
     if (userTyped == PS2_KEY_ARROW_LEFT) {
         nextMove = 'l';
@@ -150,6 +152,19 @@ static void user_set_direction() {
     } else if (userTyped == PS2_KEY_ARROW_UP) {
         nextMove = 'u';
     } else if (userTyped == PS2_KEY_ARROW_DOWN) {
+        nextMove = 'd';
+    }
+}
+
+static void user_set_direction_nes() {
+    read_nes_controller();
+    if (!left_button) {
+        nextMove = 'l';
+    } else if (!right_button) {
+        nextMove = 'r';
+    } else if (!up_button) {
+        nextMove = 'u';
+    } else if (!down_button) {
         nextMove = 'd';
     }
 }
@@ -170,7 +185,7 @@ static void make_current_move() {
 
 void pacman_move() {
     erase_pacman();
-    user_set_direction();
+    user_set_direction_nes();
     for (int i = 0; i < 6; i++) {
         try_to_make_next_move();
         check_for_dots();

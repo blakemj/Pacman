@@ -5,6 +5,8 @@
 #include "pacman_char.h"
 #include "timer.h"
 #include "ghosts.h"
+#include "nes.h"
+
 
 static int divide(int numTens, int divider) {
     for (int i = 0; i < 8 - numTens; i++) {
@@ -21,6 +23,7 @@ void main(void)
   int charHeight = gl_get_char_height();
   int lives = 3;
   int frightenedBonus = 0;
+  nes_init();
   board_init();
   draw_dots();
   int prevScore = 0;
@@ -60,3 +63,4 @@ void main(void)
       gl_draw_rect(0, 34*8, gl_get_width(), 2*8, GL_BLACK);
   }
 }
+
