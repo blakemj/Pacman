@@ -7,6 +7,8 @@ void pacman_init();
 
 void erase_pacman();
 
+void draw_pacman(int x, int y);
+
 void pacman_move();
 
 int check_sides(int x, int y, unsigned char direction, color_t color);

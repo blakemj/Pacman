@@ -30,9 +30,9 @@ int pacman_get_y() {
     return yCoord;
 }
 
-static void draw_pacman() {
-    gl_draw_circle(xCoord, yCoord, pacman_width, pacman_width, GL_YELLOW);
-    gl_draw_triangle(xCoord + pacman_width / 2 - 2, yCoord + pacman_width / 2, xCoord + pacman_width - 1, yCoord + pacman_width / 2 - 3, xCoord + pacman_width - 1, yCoord + pacman_width / 2 + 3, GL_BLACK);
+void draw_pacman(int x, int y) {
+    gl_draw_circle(x, y, pacman_width, pacman_width, GL_YELLOW);
+    gl_draw_triangle(x + pacman_width / 2 - 2, y + pacman_width / 2, x + pacman_width - 1, y + pacman_width / 2 - 3, x + pacman_width - 1, y + pacman_width / 2 + 3, GL_BLACK);
 }
 
 void erase_pacman() {
@@ -51,7 +51,7 @@ void pacman_init() {
     nextMove = 'r';
     superDotBonus = 0;
     frightenedPointsNotAdded = 0;
-    draw_pacman(); 
+    draw_pacman(xCoord, yCoord); 
 }
 
 unsigned char pacman_get_curMove() {
@@ -182,5 +182,5 @@ void pacman_move() {
         if (xCoord <= 0) xCoord = gl_get_width() - 1;
         if (xCoord >= gl_get_width()) xCoord = 1;
     }
-    draw_pacman();
+    draw_pacman(xCoord, yCoord);
 }

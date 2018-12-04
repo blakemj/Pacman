@@ -27,6 +27,9 @@ void main(void)
   while (lives) {
       pacman_init();
       ghosts_init();
+      for (int i = 0; i < lives - 1; i++) {
+          draw_pacman(i*(2*8) + 1, 34*8);
+      }
       gl_swap_buffer();
       timer_delay(3);
       while(numDots - 4 && !pacman_hit_ghost()) {
@@ -54,5 +57,6 @@ void main(void)
       prevScore = total_score;
       if (pacman_hit_ghost()) lives--;
       if (!(numDots - 4)) draw_dots();
+      gl_draw_rect(0, 34*8, gl_get_width(), 2*8, GL_BLACK);
   }
 }
