@@ -37,21 +37,45 @@ static color_t saveRectClyde[GHOST_WIDTH][GHOST_WIDTH];
 static void draw_blinky_rect(color_t color) {
         gl_draw_circle(blinky_x, blinky_y, (GHOST_WIDTH), (GHOST_WIDTH), color);
         gl_draw_rect(blinky_x, blinky_y + (GHOST_WIDTH) / 2 - 1, (GHOST_WIDTH), (GHOST_WIDTH) / 2 + 1, color);
+        gl_draw_rect(blinky_x + 2, blinky_y + 3, 4, 4, GL_WHITE);
+        gl_draw_rect(blinky_x + 8, blinky_y + 3, 4, 4, GL_WHITE);
+        gl_draw_rect(blinky_x + 2, blinky_y + 5, 2, 2, GL_BLUE);
+        gl_draw_rect(blinky_x + 8, blinky_y + 5, 2, 2, GL_BLUE);
+        gl_draw_triangle(blinky_x + 1, blinky_y - 1 + GHOST_WIDTH, blinky_x + 1 + 2, blinky_y - 1 + GHOST_WIDTH - 3, blinky_x + 1 + 4, blinky_y - 1 + GHOST_WIDTH, GL_BLACK);
+        gl_draw_triangle(blinky_x + GHOST_WIDTH / 2 + 1, blinky_y - 1 + GHOST_WIDTH, blinky_x + GHOST_WIDTH / 2 + 1 + 2, blinky_y - 1 + GHOST_WIDTH - 3, blinky_x + GHOST_WIDTH / 2+ 1 + 4, blinky_y - 1 + GHOST_WIDTH, GL_BLACK);
 }
 
 static void draw_pinky_rect(color_t color) {
         gl_draw_circle(pinky_x, pinky_y, (GHOST_WIDTH), (GHOST_WIDTH), color);
         gl_draw_rect(pinky_x, pinky_y + (GHOST_WIDTH) / 2 - 1, (GHOST_WIDTH), (GHOST_WIDTH) / 2 + 1, color);
+        gl_draw_rect(pinky_x + 2, pinky_y + 3, 4, 4, GL_WHITE);
+        gl_draw_rect(pinky_x + 8, pinky_y + 3, 4, 4, GL_WHITE);
+        gl_draw_rect(pinky_x + 4, pinky_y + 5, 2, 2, GL_BLUE);
+        gl_draw_rect(pinky_x + 10, pinky_y + 5, 2, 2, GL_BLUE);
+        gl_draw_triangle(pinky_x + 1, pinky_y - 1 + GHOST_WIDTH, pinky_x + 1 + 2, pinky_y - 1 + GHOST_WIDTH - 3, pinky_x + 1 + 4, pinky_y - 1 + GHOST_WIDTH, GL_BLACK);
+        gl_draw_triangle(pinky_x + GHOST_WIDTH / 2 + 1, pinky_y - 1 + GHOST_WIDTH, pinky_x + GHOST_WIDTH / 2 + 1 + 2, pinky_y - 1 + GHOST_WIDTH - 3, pinky_x + GHOST_WIDTH / 2 + 1 + 4, pinky_y - 1 + GHOST_WIDTH, GL_BLACK);
 }
 
 static void draw_inky_rect(color_t color) {
         gl_draw_circle(inky_x, inky_y, (GHOST_WIDTH), (GHOST_WIDTH), color);
         gl_draw_rect(inky_x, inky_y + (GHOST_WIDTH) / 2 - 1, (GHOST_WIDTH), (GHOST_WIDTH) / 2 + 1, color);
+        gl_draw_rect(inky_x + 2, inky_y + 3, 4, 4, GL_WHITE);
+        gl_draw_rect(inky_x + 8, inky_y + 3, 4, 4, GL_WHITE);
+        gl_draw_rect(inky_x + 2, inky_y + 3, 2, 2, GL_BLUE);
+        gl_draw_rect(inky_x + 8, inky_y + 3, 2, 2, GL_BLUE);
+        gl_draw_triangle(inky_x + 1, inky_y - 1 + GHOST_WIDTH, inky_x + 1 + 2, inky_y - 1 + GHOST_WIDTH - 3, inky_x + 1 + 4, inky_y - 1 + GHOST_WIDTH, GL_BLACK);
+        gl_draw_triangle(inky_x + GHOST_WIDTH / 2 + 1, inky_y - 1 + GHOST_WIDTH, inky_x + GHOST_WIDTH / 2 + 1 + 2, inky_y - 1 + GHOST_WIDTH - 3, inky_x + GHOST_WIDTH / 2 + 1 + 4, inky_y - 1 + GHOST_WIDTH, GL_BLACK);
 }
 
 static void draw_clyde_rect(color_t color) {
         gl_draw_circle(clyde_x, clyde_y, (GHOST_WIDTH), (GHOST_WIDTH), color);
         gl_draw_rect(clyde_x, clyde_y + (GHOST_WIDTH) / 2 - 1, (GHOST_WIDTH), (GHOST_WIDTH) / 2 + 1, color);
+        gl_draw_rect(clyde_x + 2, clyde_y + 3, 4, 4, GL_WHITE);
+        gl_draw_rect(clyde_x + 8, clyde_y + 3, 4, 4, GL_WHITE);
+        gl_draw_rect(clyde_x + 4, clyde_y + 3, 2, 2, GL_BLUE);
+        gl_draw_rect(clyde_x + 10, clyde_y + 3, 2, 2, GL_BLUE);
+        gl_draw_triangle(clyde_x + 1, clyde_y - 1 + GHOST_WIDTH, clyde_x + 1 + 2, clyde_y - 1 + GHOST_WIDTH - 3, clyde_x + 1 + 4, clyde_y - 1 + GHOST_WIDTH, GL_BLACK);
+        gl_draw_triangle(clyde_x + GHOST_WIDTH / 2 + 1, clyde_y - 1 + GHOST_WIDTH, clyde_x + GHOST_WIDTH / 2 + 1 + 2, clyde_y - 1 + GHOST_WIDTH - 3, clyde_x + GHOST_WIDTH / 2 + 1 + 4, clyde_y - 1 + GHOST_WIDTH, GL_BLACK);
 }
 
 static void save_under_blinky() {
@@ -208,30 +232,51 @@ static void mode_change() {
     }
 }
 
-void ghosts_init() {
+static void blinky_init() {
     blinky_x = 14*8 - 8 + 1;
     blinky_y = 14*8 - 4 + 1;
     blinkyCurMove = 'l';
     blinkyStuckInBox = 40;
+    blinky_caught = 0;
+    blinky_to_center = 1;
+}
+
+static void pinky_init() {
     pinky_x = 14*8 - 8 + 1;
     pinky_y = 17*8 - 4 + 1;
     pinkyCurMove = 'u';
     pinkyStuckInBox = timer_get_ticks();
+    pinky_caught = 0;
+    pinky_to_center = 1;
+}
+
+static void inky_init() {
     inky_x = 12*8 - 8 + 1;
     inky_y = 17*8 - 4 + 1;
-    inkyCurMove = 'u';
+    inkyCurMove = 'r';
     inkyStuckInBox = 0;
+    inky_caught = 0;
+    inky_to_center = 1;
+}
+
+static void clyde_init() {
     clyde_x = 16*8 - 8 + 1;
     clyde_y = 17*8 - 4 + 1;
-    clydeCurMove = 'u';
+    clydeCurMove = 'l';
     clydeStuckInBox = 0;
+    clyde_caught = 0;
+    clyde_to_center = 1;
+}
+
+void ghosts_init() {
+    blinky_init();
+    pinky_init();
+    inky_init();
+    clyde_init();
     draw_ghosts(0);
+    //Initialize different ghost modes (scatter on for start of 12 sec, frightened off)
     scatter = 1;
     frightened = 0;
-    blinky_to_center = 1;
-    pinky_to_center = 1;
-    inky_to_center = 1;
-    clyde_to_center = 1;
     modeTime = 12;
     modeRound = 0;
     mode_start = timer_get_ticks();
@@ -243,6 +288,7 @@ static unsigned char ghost_decision(int ghostx, int ghosty, unsigned char curMov
     int checkUp = 0;
     int checkDown = 0;
     unsigned char dontGo;
+    //Ghosts cannot go backwards
     if (curMove == 'r') dontGo = 'l';
     if (curMove == 'l') dontGo = 'r';
     if (curMove == 'd') dontGo = 'u';
@@ -251,6 +297,7 @@ static unsigned char ghost_decision(int ghostx, int ghosty, unsigned char curMov
     if (dontGo != 'l' && !check_sides(ghostx, ghosty, 'l', GL_BLUE)) checkLeft = 1;
     if (dontGo != 'u' && !check_sides(ghostx, ghosty, 'u',GL_BLUE)) checkUp = 1;
     if (dontGo != 'd' && !check_sides(ghostx, ghosty, 'd', GL_BLUE)) checkDown = 1;
+    //Find the open tile that is the closest distance to the target tile
     int leastDistance = 0;
     if (checkRight == 1) {
         int distance = (ghostx + 2*8 + 4 - targetx) * (ghostx + 2*8 + 4 - targetx) + (ghosty + 4 - targety) * (ghosty + 4 - targety);
@@ -301,12 +348,12 @@ static void blinky_movement() {
 
 void blinky_move() {
     erase_blinky();
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 5; i++) {
         mode_change();
-        if (blinkyStuckInBox < 40) {
+        if (blinkyStuckInBox < 40) { //This mode is for when blinky is stuck in the box
             blinkyCurMove = 'u';
             blinkyStuckInBox++;
-        } else if (frightened && !blinky_caught) {
+        } else if (frightened && !blinky_caught) { //This mode is movement during frightened mode
             int targetX = pacman_get_x();
             int targetY = pacman_get_y();
             if (pacman_get_curMove() == 'r') targetX = targetX + 2*8;
@@ -316,9 +363,9 @@ void blinky_move() {
             targetX = ((targetX - blinky_x) % 10) * 3;
             targetY = ((targetY - blinky_y) % 10) * 4;
             blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, targetX, targetY);
-        } else if (scatter) {
+        } else if (scatter) { //This mode is movement during scatter mode
             blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, 25*8, 0);
-        } else {
+        } else { //This mode is movement during target mode
             blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, pacman_get_x(), pacman_get_y());
         }
         blinky_movement();
@@ -344,7 +391,7 @@ static void pinky_movement() {
 void pinky_move() {
     erase_pinky();
     if (timer_get_ticks() - pinkyStuckInBox < 4 * 1000000) return;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
         if (pinkyStuckInBox < 40) {
             pinkyCurMove = 'u';
             pinkyStuckInBox++;
@@ -392,7 +439,7 @@ static void inky_movement() {
 void inky_move() {
     erase_inky();
     if (244 - numDots < 20) return;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
         if (inkyStuckInBox < 16) {
             inkyCurMove = 'r';
             inkyStuckInBox++;

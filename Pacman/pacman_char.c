@@ -7,7 +7,7 @@
 #include "board.h"
 #include "ghosts.h"
 
-#define pacman_width 2*8 - 2
+#define pacman_width (2*8 - 2)
 
 static int xCoord;
 static int yCoord;
@@ -32,6 +32,7 @@ int pacman_get_y() {
 
 static void draw_pacman() {
     gl_draw_circle(xCoord, yCoord, pacman_width, pacman_width, GL_YELLOW);
+    gl_draw_triangle(xCoord + pacman_width / 2 - 2, yCoord + pacman_width / 2, xCoord + pacman_width - 1, yCoord + pacman_width / 2 - 3, xCoord + pacman_width - 1, yCoord + pacman_width / 2 + 3, GL_BLACK);
 }
 
 void erase_pacman() {
@@ -77,24 +78,7 @@ int check_sides(int x, int y, unsigned char direction, color_t color) {
     return side_hit;
 }
 
-void pacman_move() {
-    erase_pacman();
-    unsigned char userTyped = pacman_keyboard_read_next();
-    if (userTyped == PS2_KEY_ARROW_LEFT) {
-        nextMove = 'l';
-    } else if (userTyped == PS2_KEY_ARROW_RIGHT) {
-        nextMove = 'r';
-    } else if (userTyped == PS2_KEY_ARROW_UP) {
-        nextMove = 'u';
-    } else if (userTyped == PS2_KEY_ARROW_DOWN) {
-        nextMove = 'd';
-    }
-    for (int i = 0; i < 6; i++) {
-        if (nextMove == 'r' && !check_sides(xCoord, yCoord, 'r', GL_BLUE)) curMove = 'r';
-        if (nextMove == 'l' && !check_sides(xCoord, yCoord, 'l', GL_BLUE)) curMove = 'l';
-        if (nextMove == 'u' && !check_sides(xCoord, yCoord, 'u', GL_BLUE)) curMove = 'u';
-        if (nextMove == 'd' && !check_sides(xCoord, yCoord, 'd', GL_BLUE)) curMove = 'd';
-        if (check_sides(xCoord, yCoord, curMove, GL_WHITE)) numDots--;
+static void check_for_regular_ghosts() {
         if (check_sides(xCoord, yCoord, 'l', GL_RED)) ghostHit = 1;
         if (check_sides(xCoord, yCoord, 'r', GL_RED)) ghostHit = 1;
         if (check_sides(xCoord, yCoord, 'u', GL_RED)) ghostHit = 1;
@@ -111,40 +95,90 @@ void pacman_move() {
         if (check_sides(xCoord, yCoord, 'r', GL_AMBER)) ghostHit = 1;
         if (check_sides(xCoord, yCoord, 'u', GL_AMBER)) ghostHit = 1;
         if (check_sides(xCoord, yCoord, 'd', GL_AMBER)) ghostHit = 1;
-        if (check_sides(xCoord, yCoord, 'l', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'r', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'u', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'd', GL_OFFWHITE)) {
-            frightened = 1;
-            frightened_start = timer_get_ticks();
-            superDotBonus++;
-        }
-        if (!frightened) frightened_points = 10;
+}
+
+static int check_for_frightened_ghosts() {
         if (check_sides(xCoord, yCoord, 'l', GL_PURPLE1) || check_sides(xCoord, yCoord, 'r', GL_PURPLE1) || check_sides(xCoord, yCoord, 'u', GL_PURPLE1) || check_sides(xCoord, yCoord, 'd', GL_PURPLE1)) {
             blinky_caught = 1;
             frightenedPointsNotAdded = 1;
             frightened_points = frightened_points + 10;
-            break;
+            return 1;
         }
         if (check_sides(xCoord, yCoord, 'l', GL_PURPLE2) || check_sides(xCoord, yCoord, 'r', GL_PURPLE2) || check_sides(xCoord, yCoord, 'u', GL_PURPLE2) || check_sides(xCoord, yCoord, 'd', GL_PURPLE2)) {
             pinky_caught = 1;
             frightenedPointsNotAdded = 1;
             frightened_points = frightened_points + 10;
-            break;
+            return 1;
         }
         if (check_sides(xCoord, yCoord, 'l', GL_PURPLE3) || check_sides(xCoord, yCoord, 'r', GL_PURPLE3) || check_sides(xCoord, yCoord, 'u', GL_PURPLE3) || check_sides(xCoord, yCoord, 'd', GL_PURPLE3)) {
             inky_caught = 1;
             frightenedPointsNotAdded = 1;
             frightened_points = frightened_points + 10;
-            break;
+            return 1;
+    }
+    if (check_sides(xCoord, yCoord, 'l', GL_PURPLE4) || check_sides(xCoord, yCoord, 'r', GL_PURPLE4) || check_sides(xCoord, yCoord, 'u', GL_PURPLE4) || check_sides(xCoord, yCoord, 'd', GL_PURPLE4)) {
+        clyde_caught = 1;
+        frightenedPointsNotAdded = 1;
+        frightened_points = frightened_points + 10;
+        return 1;
+    }
+    return 0;
+}
+
+static void check_for_dots() {
+    if (check_sides(xCoord, yCoord, curMove, GL_WHITE)) numDots--;
+    if (check_sides(xCoord, yCoord, 'l', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'r', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'u', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'd', GL_OFFWHITE)) {
+        if (frightened && timer_get_ticks() - frightened_start > 1000000) {
+            frightened_start = timer_get_ticks();
+            blinky_caught = 0;
+            pinky_caught = 0;
+            inky_caught = 0;
+            clyde_caught = 0;
         }
-        if (check_sides(xCoord, yCoord, 'l', GL_PURPLE4) || check_sides(xCoord, yCoord, 'r', GL_PURPLE4) || check_sides(xCoord, yCoord, 'u', GL_PURPLE4) || check_sides(xCoord, yCoord, 'd', GL_PURPLE4)) {
-            clyde_caught = 1;
-            frightenedPointsNotAdded = 1;
-            frightened_points = frightened_points + 10;
-            break;
-        }
-        if (curMove == 'r' && !check_sides(xCoord, yCoord, 'r', GL_BLUE)) xCoord = xCoord + 1;
-        if (curMove == 'l' && !check_sides(xCoord, yCoord, 'l', GL_BLUE)) xCoord = xCoord - 1;
-        if (curMove == 'u' && !check_sides(xCoord, yCoord, 'u', GL_BLUE)) yCoord = yCoord - 1;
-        if (curMove == 'd' && !check_sides(xCoord, yCoord, 'd', GL_BLUE)) yCoord = yCoord + 1;
+        frightened = 1;
+        frightened_start = timer_get_ticks();
+        superDotBonus++;
+    }
+}
+
+static void user_set_direction() {
+    unsigned char userTyped = pacman_keyboard_read_next();
+    if (userTyped == PS2_KEY_ARROW_LEFT) {
+        nextMove = 'l';
+    } else if (userTyped == PS2_KEY_ARROW_RIGHT) {
+        nextMove = 'r';
+    } else if (userTyped == PS2_KEY_ARROW_UP) {
+        nextMove = 'u';
+    } else if (userTyped == PS2_KEY_ARROW_DOWN) {
+        nextMove = 'd';
+    }
+}
+
+static void try_to_make_next_move() {
+    if (nextMove == 'r' && !check_sides(xCoord, yCoord, 'r', GL_BLUE)) curMove = 'r';
+    if (nextMove == 'l' && !check_sides(xCoord, yCoord, 'l', GL_BLUE)) curMove = 'l';
+    if (nextMove == 'u' && !check_sides(xCoord, yCoord, 'u', GL_BLUE)) curMove = 'u';
+    if (nextMove == 'd' && !check_sides(xCoord, yCoord, 'd', GL_BLUE)) curMove = 'd';
+}
+
+static void make_current_move() {
+    if (curMove == 'r' && !check_sides(xCoord, yCoord, 'r', GL_BLUE)) xCoord = xCoord + 1;
+    if (curMove == 'l' && !check_sides(xCoord, yCoord, 'l', GL_BLUE)) xCoord = xCoord - 1;
+    if (curMove == 'u' && !check_sides(xCoord, yCoord, 'u', GL_BLUE)) yCoord = yCoord - 1;
+    if (curMove == 'd' && !check_sides(xCoord, yCoord, 'd', GL_BLUE)) yCoord = yCoord + 1;
+}
+
+void pacman_move() {
+    erase_pacman();
+    user_set_direction();
+    for (int i = 0; i < 6; i++) {
+        try_to_make_next_move();
+        check_for_dots();
+        check_for_regular_ghosts();
+        if (ghostHit == 1) break;
+        if (!frightened) frightened_points = 10;
+        if (check_for_frightened_ghosts()) break;
+        make_current_move();
         if (xCoord <= 0) xCoord = gl_get_width() - 1;
         if (xCoord >= gl_get_width()) xCoord = 1;
     }
