@@ -18,14 +18,17 @@ static int charHeight;
 
 static void start_screen() {
     char* title = pacman_printf("PACMAN");
-    gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(title) / 2), BOARD_HEIGHT / 4 - charHeight / 2, title, GL_YELLOW);
+    gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(title) / 2), charHeight / 2, title, GL_YELLOW);
     char* by = pacman_printf("PROJECT BY:");
     gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(by) / 2), 3 * BOARD_HEIGHT / 4 + charHeight, by, GL_CYAN); 
     char* name = pacman_printf("BLAKE JONES");
     gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(name) / 2), 3 * BOARD_HEIGHT / 4 + 2 * charHeight + 2, name, GL_MAGENTA);
     char* pressStart = pacman_printf("PRESS START");
-    gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(pressStart) / 2), BOARD_HEIGHT / 2 - charHeight / 2, pressStart, GL_WHITE);
-    gl_swap_buffer();
+    gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(pressStart) / 2), BOARD_HEIGHT / 2 - 4 * charHeight, pressStart, GL_WHITE);
+    char* onePlay = pacman_printf("A: One Player ");
+    gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(onePlay) / 2), BOARD_HEIGHT / 2 - 2 * charHeight, onePlay, GL_RED);
+    char* twoPlay = pacman_printf("B: Two Players");
+    gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(twoPlay) / 2), BOARD_HEIGHT / 2 - charHeight / 2, twoPlay, GL_AMBER);
 }
 
 static void game_over() {
@@ -55,22 +58,35 @@ void main(void)
       gl_clear(GL_BLACK);
       start_screen();
       start_button = 1;
+      int twoPlayer = 0;
       while (start_button) {
           read_nes_controller();
+          if (!a_button) twoPlayer = 0;
+          if (!b_button) twoPlayer = 1;
+          if (!twoPlayer) {
+              gl_draw_rect(0, BOARD_HEIGHT / 2 - 4, 8, 8, GL_BLACK);
+              gl_draw_rect(0, BOARD_HEIGHT / 2 - 3 * charHeight / 2 - 4, 8, 8, GL_PURPLE1);
+          } else {
+              gl_draw_rect(0, BOARD_HEIGHT / 2 - 3 * charHeight / 2 - 4, 8, 8, GL_BLACK);
+              gl_draw_rect(0, BOARD_HEIGHT / 2 - 4, 8, 8, GL_PURPLE1);
+          }
+          gl_swap_buffer();
       }
       board_init();
       draw_dots();
       int prevScore = 0;
       while (lives) {
           pacman_init();
+          ms_pacman_init();
           ghosts_init();
           for (int i = 0; i < lives - 1; i++) {
-              draw_pacman(i*(2*8) + 1, 34*8);
+              draw_pacman(i*(2*8) + 1, 34*8, pacman_get_curMove());
           }
           gl_swap_buffer();
           timer_delay(3);
-          while(numDots - 4 && !pacman_hit_ghost()) {
-              pacman_move();
+          while(numDots - 4 && !(pacman_hit_ghost() && ms_pacman_hit_ghost())) {
+              if(!pacman_hit_ghost()) pacman_move();
+              if (!ms_pacman_hit_ghost()) ms_pacman_move();
               blinky_move();
               pinky_move();
               inky_move();
@@ -85,14 +101,17 @@ void main(void)
               }
               gl_swap_buffer();
               gl_draw_rect(8, 1, 9*charWidth, charHeight, GL_BLACK);
+              if(pacman_hit_ghost()) erase_pacman(pacman_get_x(), pacman_get_y());
+              if(ms_pacman_hit_ghost()) erase_pacman(ms_pacman_get_x(), ms_pacman_get_y());
           }
           erase_blinky();
           erase_pinky();
           erase_inky();
           erase_clyde();
-          erase_pacman();
+          erase_pacman(pacman_get_x(), pacman_get_y());
+          erase_pacman(ms_pacman_get_x(), ms_pacman_get_y());
           prevScore = total_score;
-          if (pacman_hit_ghost()) lives--;
+          if (pacman_hit_ghost() && ms_pacman_hit_ghost()) lives--;
           if (!(numDots - 4)) draw_dots();
           gl_draw_rect(0, 34*8, gl_get_width(), 2*8, GL_BLACK);
       }
