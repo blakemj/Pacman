@@ -10,7 +10,6 @@
 int numDots;
 
 void board_init() {
-    gl_init(BOARD_WIDTH, BOARD_HEIGHT, GL_DOUBLEBUFFER);
     gl_clear(GL_BLACK);
     //This is the surrounding border
     gl_draw_line(HALF_TILE, 3*TILE_WIDTH + HALF_TILE, 13*8 + HALF_TILE, 3*8 + HALF_TILE, GL_BLUE);

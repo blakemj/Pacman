@@ -360,8 +360,8 @@ void blinky_move() {
             if (pacman_get_curMove() == 'l') targetX = targetX - 2*8;
             if (pacman_get_curMove() == 'd') targetY = targetY + 2*8;
             if (pacman_get_curMove() == 'u') targetY = targetY - 2*8;
-            targetX = ((targetX - blinky_x) % 10) * 3;
-            targetY = ((targetY - blinky_y) % 10) * 4;
+            targetX = ((targetX - blinky_x) % 28*8);
+            targetY = ((targetY - blinky_y) % 36*8);
             blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, targetX, targetY);
         } else if (scatter) { //This mode is movement during scatter mode
             blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, 25*8, 0);
@@ -402,8 +402,8 @@ void pinky_move() {
             if (pacman_get_curMove() == 'l') targetX = targetX - 2*8;
             if (pacman_get_curMove() == 'd') targetY = targetY + 2*8;
             if (pacman_get_curMove() == 'u') targetY = targetY - 2*8;
-            targetX = ((targetX - pinky_x) % 10) * 3;
-            targetY = ((targetY - pinky_y) % 10) * 4;
+            targetX = ((targetX - pinky_x) % 28*8);
+            targetY = ((targetY - pinky_y) % 36*8);
             pinkyCurMove = ghost_decision(pinky_x, pinky_y, pinkyCurMove, targetX, targetY);
         } else if (scatter) {
             pinkyCurMove = ghost_decision(pinky_x, pinky_y, pinkyCurMove, 2*8, 0);
@@ -453,8 +453,8 @@ void inky_move() {
             if (pacman_get_curMove() == 'l') targetX = targetX - 2*8;
             if (pacman_get_curMove() == 'd') targetY = targetY + 2*8;
             if (pacman_get_curMove() == 'u') targetY = targetY - 2*8;
-            targetX = ((targetX - inky_x) % 10) * 3;
-            targetY = ((targetY - inky_y) % 10) * 4;
+            targetX = ((targetX - inky_x) % 28*8);
+            targetY = ((targetY - inky_y) % 36*8);
             inkyCurMove = ghost_decision(inky_x, inky_y, inkyCurMove, targetX, targetY);
         } else if (scatter) {
             inkyCurMove = ghost_decision(inky_x, inky_y, inkyCurMove, 27*8, 35*8);
@@ -506,8 +506,8 @@ void clyde_move() {
                 if (pacman_get_curMove() == 'l') targetX = targetX - 2*8;
                 if (pacman_get_curMove() == 'd') targetY = targetY + 2*8;
                 if (pacman_get_curMove() == 'u') targetY = targetY - 2*8;
-                targetX = ((targetX - clyde_x) % 10) * 3;
-                targetY = ((targetY - clyde_y) % 10) * 4;
+                targetX = ((targetX - clyde_x) % 28*8);
+                targetY = ((targetY - clyde_y) % 36*8);
                 clydeCurMove = ghost_decision(clyde_x, clyde_y, clydeCurMove, targetX, targetY);
             } else if(scatter) {
                 clydeCurMove = ghost_decision(clyde_x, clyde_y, clydeCurMove, 0, 35*8);

@@ -8,7 +8,6 @@
 #include "ghosts.h"
 #include "nes.h"
 
-
 #define pacman_width (2*8 - 2)
 
 static int xCoord;
@@ -19,6 +18,9 @@ static int ghostHit;
 int frightened_points;
 int superDotBonus;
 int frightenedPointsNotAdded;
+
+static unsigned char nextMove;
+static unsigned char curMove;
 
 int pacman_hit_ghost() {
     return ghostHit;
@@ -34,15 +36,15 @@ int pacman_get_y() {
 
 void draw_pacman(int x, int y) {
     gl_draw_circle(x, y, pacman_width, pacman_width, GL_YELLOW);
-    gl_draw_triangle(x + pacman_width / 2 - 2, y + pacman_width / 2, x + pacman_width - 1, y + pacman_width / 2 - 3, x + pacman_width - 1, y + pacman_width / 2 + 3, GL_BLACK);
+    if (curMove == 'r') gl_draw_triangle(x + pacman_width / 2 - 2, y + pacman_width / 2, x + pacman_width - 1, y + pacman_width / 2 - 3, x + pacman_width - 1, y + pacman_width / 2 + 3, GL_BLACK);
+    if (curMove == 'l') gl_draw_triangle(x + pacman_width - 5, y + pacman_width / 2 + 1, x, y + pacman_width / 2 - 3, x, y + pacman_width / 2 + 4, GL_BLACK);
+    if (curMove == 'u') gl_draw_triangle(x + pacman_width / 2, y + pacman_width / 2 + 2, x + pacman_width / 2 - 3, y, x + pacman_width / 2 + 3, y, GL_BLACK);
+    if (curMove == 'd') gl_draw_triangle(x + pacman_width / 2, y + pacman_width / 2 - 2, x + pacman_width / 2 - 3, y + pacman_width - 1, x + pacman_width / 2 + 3, y + pacman_width - 1, GL_BLACK);
 }
 
 void erase_pacman() {
     gl_draw_rect(xCoord, yCoord, 2*8 - 2, 2*8 - 2, GL_BLACK);
 }
-
-static unsigned char nextMove;
-static unsigned char curMove;
 
 void pacman_init() {
     pacman_keyboard_init();
