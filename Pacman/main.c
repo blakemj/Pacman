@@ -29,7 +29,7 @@ static void start_screen() {
 
 static void game_over() {
     char* gameOver = pacman_printf("GAME OVER");
-    gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(gameOver) / 2), BOARD_HEIGHT / 2 - charHeight / 2, gameOver, GL_WHITE);
+    gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(gameOver) / 2), BOARD_HEIGHT / 2 - charHeight / 2, gameOver, GL_RED);
     gl_swap_buffer();
 }
 

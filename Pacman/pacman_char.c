@@ -132,13 +132,14 @@ static int check_for_frightened_ghosts() {
 static void check_for_dots() {
     if (check_sides(xCoord, yCoord, curMove, GL_WHITE)) numDots--;
     if (check_sides(xCoord, yCoord, 'l', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'r', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'u', GL_OFFWHITE) || check_sides(xCoord, yCoord, 'd', GL_OFFWHITE)) {
-        if (frightened && timer_get_ticks() - frightened_start > 1000000) {
-            frightened_start = timer_get_ticks();
-            blinky_caught = 0;
-            pinky_caught = 0;
-            inky_caught = 0;
-            clyde_caught = 0;
-        }
+        blinky_caught = 0;
+        pinky_caught = 0;
+        inky_caught = 0;
+        clyde_caught = 0;
+        blinky_to_center = 1;
+        pinky_to_center = 1;
+        inky_to_center = 1;
+        clyde_to_center = 1;
         frightened = 1;
         frightened_start = timer_get_ticks();
         superDotBonus++;
@@ -192,7 +193,7 @@ void pacman_move() {
         try_to_make_next_move();
         check_for_dots();
         check_for_regular_ghosts();
-        if (ghostHit == 1) break;
+        if (ghostHit) break;
         if (!frightened) frightened_points = 10;
         if (check_for_frightened_ghosts()) break;
         make_current_move();

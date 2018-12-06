@@ -6,6 +6,10 @@
 #include "gl_more.h"
 
 #define GHOST_WIDTH (2*8 - 2)
+#define FRIGHTENED_MODE_LENGTH 7
+
+static int half_tile;
+static int full_tile;
 
 //These are the coordinates (x, y) for all the ghosts
 static int blinky_x;
@@ -34,78 +38,55 @@ static color_t saveRectPinky[GHOST_WIDTH][GHOST_WIDTH];
 static color_t saveRectInky[GHOST_WIDTH][GHOST_WIDTH];
 static color_t saveRectClyde[GHOST_WIDTH][GHOST_WIDTH];
 
+int blinky_to_center;
+int pinky_to_center;
+int inky_to_center;
+int clyde_to_center;
+
+static int mode_start;
+static int scatter;
+int frightened;
+int frightened_start;
+static int modeTime;
+static int modeRound;
+
+static void draw_ghost_shape(int x, int y, color_t color) {
+        gl_draw_circle(x, y, (GHOST_WIDTH), (GHOST_WIDTH), color);
+        gl_draw_rect(x, y + (GHOST_WIDTH) / 2 - 1, (GHOST_WIDTH), (GHOST_WIDTH) / 2 + 1, color);
+        gl_draw_rect(x + 2, y + 3, half_tile, half_tile, GL_WHITE);
+        gl_draw_rect(x + 8, y + 3, half_tile, half_tile, GL_WHITE);
+        gl_draw_triangle(x + 1, y - 1 + GHOST_WIDTH, x + 1 + 2, y - 1 + GHOST_WIDTH - 3, x + 1 + half_tile, y - 1 + GHOST_WIDTH, GL_BLACK); 
+        gl_draw_triangle(x + GHOST_WIDTH / 2 + 1, y - 1 + GHOST_WIDTH, x + GHOST_WIDTH / 2 + 1 + 2, y - 1 + GHOST_WIDTH - 3, x + GHOST_WIDTH / 2+ 1 + half_tile, y - 1 + GHOST_WIDTH, GL_BLACK);
+}
+
 static void draw_blinky_rect(color_t color) {
-        gl_draw_circle(blinky_x, blinky_y, (GHOST_WIDTH), (GHOST_WIDTH), color);
-        gl_draw_rect(blinky_x, blinky_y + (GHOST_WIDTH) / 2 - 1, (GHOST_WIDTH), (GHOST_WIDTH) / 2 + 1, color);
-        gl_draw_rect(blinky_x + 2, blinky_y + 3, 4, 4, GL_WHITE);
-        gl_draw_rect(blinky_x + 8, blinky_y + 3, 4, 4, GL_WHITE);
+    draw_ghost_shape(blinky_x, blinky_y, color);
         gl_draw_rect(blinky_x + 2, blinky_y + 5, 2, 2, GL_BLUE);
         gl_draw_rect(blinky_x + 8, blinky_y + 5, 2, 2, GL_BLUE);
-        gl_draw_triangle(blinky_x + 1, blinky_y - 1 + GHOST_WIDTH, blinky_x + 1 + 2, blinky_y - 1 + GHOST_WIDTH - 3, blinky_x + 1 + 4, blinky_y - 1 + GHOST_WIDTH, GL_BLACK);
-        gl_draw_triangle(blinky_x + GHOST_WIDTH / 2 + 1, blinky_y - 1 + GHOST_WIDTH, blinky_x + GHOST_WIDTH / 2 + 1 + 2, blinky_y - 1 + GHOST_WIDTH - 3, blinky_x + GHOST_WIDTH / 2+ 1 + 4, blinky_y - 1 + GHOST_WIDTH, GL_BLACK);
 }
 
 static void draw_pinky_rect(color_t color) {
-        gl_draw_circle(pinky_x, pinky_y, (GHOST_WIDTH), (GHOST_WIDTH), color);
-        gl_draw_rect(pinky_x, pinky_y + (GHOST_WIDTH) / 2 - 1, (GHOST_WIDTH), (GHOST_WIDTH) / 2 + 1, color);
-        gl_draw_rect(pinky_x + 2, pinky_y + 3, 4, 4, GL_WHITE);
-        gl_draw_rect(pinky_x + 8, pinky_y + 3, 4, 4, GL_WHITE);
+    draw_ghost_shape(pinky_x, pinky_y, color);
         gl_draw_rect(pinky_x + 4, pinky_y + 5, 2, 2, GL_BLUE);
         gl_draw_rect(pinky_x + 10, pinky_y + 5, 2, 2, GL_BLUE);
-        gl_draw_triangle(pinky_x + 1, pinky_y - 1 + GHOST_WIDTH, pinky_x + 1 + 2, pinky_y - 1 + GHOST_WIDTH - 3, pinky_x + 1 + 4, pinky_y - 1 + GHOST_WIDTH, GL_BLACK);
-        gl_draw_triangle(pinky_x + GHOST_WIDTH / 2 + 1, pinky_y - 1 + GHOST_WIDTH, pinky_x + GHOST_WIDTH / 2 + 1 + 2, pinky_y - 1 + GHOST_WIDTH - 3, pinky_x + GHOST_WIDTH / 2 + 1 + 4, pinky_y - 1 + GHOST_WIDTH, GL_BLACK);
 }
 
 static void draw_inky_rect(color_t color) {
-        gl_draw_circle(inky_x, inky_y, (GHOST_WIDTH), (GHOST_WIDTH), color);
-        gl_draw_rect(inky_x, inky_y + (GHOST_WIDTH) / 2 - 1, (GHOST_WIDTH), (GHOST_WIDTH) / 2 + 1, color);
-        gl_draw_rect(inky_x + 2, inky_y + 3, 4, 4, GL_WHITE);
-        gl_draw_rect(inky_x + 8, inky_y + 3, 4, 4, GL_WHITE);
+    draw_ghost_shape(inky_x, inky_y, color);
         gl_draw_rect(inky_x + 2, inky_y + 3, 2, 2, GL_BLUE);
         gl_draw_rect(inky_x + 8, inky_y + 3, 2, 2, GL_BLUE);
-        gl_draw_triangle(inky_x + 1, inky_y - 1 + GHOST_WIDTH, inky_x + 1 + 2, inky_y - 1 + GHOST_WIDTH - 3, inky_x + 1 + 4, inky_y - 1 + GHOST_WIDTH, GL_BLACK);
-        gl_draw_triangle(inky_x + GHOST_WIDTH / 2 + 1, inky_y - 1 + GHOST_WIDTH, inky_x + GHOST_WIDTH / 2 + 1 + 2, inky_y - 1 + GHOST_WIDTH - 3, inky_x + GHOST_WIDTH / 2 + 1 + 4, inky_y - 1 + GHOST_WIDTH, GL_BLACK);
 }
 
 static void draw_clyde_rect(color_t color) {
-        gl_draw_circle(clyde_x, clyde_y, (GHOST_WIDTH), (GHOST_WIDTH), color);
-        gl_draw_rect(clyde_x, clyde_y + (GHOST_WIDTH) / 2 - 1, (GHOST_WIDTH), (GHOST_WIDTH) / 2 + 1, color);
-        gl_draw_rect(clyde_x + 2, clyde_y + 3, 4, 4, GL_WHITE);
-        gl_draw_rect(clyde_x + 8, clyde_y + 3, 4, 4, GL_WHITE);
+    draw_ghost_shape(clyde_x, clyde_y, color);
         gl_draw_rect(clyde_x + 4, clyde_y + 3, 2, 2, GL_BLUE);
         gl_draw_rect(clyde_x + 10, clyde_y + 3, 2, 2, GL_BLUE);
-        gl_draw_triangle(clyde_x + 1, clyde_y - 1 + GHOST_WIDTH, clyde_x + 1 + 2, clyde_y - 1 + GHOST_WIDTH - 3, clyde_x + 1 + 4, clyde_y - 1 + GHOST_WIDTH, GL_BLACK);
-        gl_draw_triangle(clyde_x + GHOST_WIDTH / 2 + 1, clyde_y - 1 + GHOST_WIDTH, clyde_x + GHOST_WIDTH / 2 + 1 + 2, clyde_y - 1 + GHOST_WIDTH - 3, clyde_x + GHOST_WIDTH / 2 + 1 + 4, clyde_y - 1 + GHOST_WIDTH, GL_BLACK);
 }
 
-static void save_under_blinky() {
+static void save_under_ghost(int x, int y, color_t saveRect[GHOST_WIDTH][GHOST_WIDTH]) {
     for (int i = 0; i < GHOST_WIDTH; i++) {
         for (int j = 0; j < GHOST_WIDTH; j++) {
-             saveRectBlinky[i][j] = gl_read_pixel(blinky_x + i, blinky_y + j);
-        }
-    }
-}
-
-static void save_under_pinky() {
-    for (int i = 0; i < GHOST_WIDTH; i++) {
-        for (int j = 0; j < GHOST_WIDTH; j++) {
-             saveRectPinky[i][j] = gl_read_pixel(pinky_x + i, pinky_y + j);
-        }
-    }
-}
-
-static void save_under_inky() {
-    for (int i = 0; i < GHOST_WIDTH; i++) {
-        for (int j = 0; j < GHOST_WIDTH; j++) {
-             saveRectInky[i][j] = gl_read_pixel(inky_x + i, inky_y + j);
-        }
-    }
-}
-
-static void save_under_clyde() {
-    for (int i = 0; i < GHOST_WIDTH; i++) {
-        for (int j = 0; j < GHOST_WIDTH; j++) {
-             saveRectClyde[i][j] = gl_read_pixel(clyde_x + i, clyde_y + j);
+             saveRect[i][j] = gl_read_pixel(x + i, y + j);
         }
     }
 }
@@ -143,10 +124,10 @@ void erase_clyde() {
 }
 
 static void draw_ghosts(int mode) {
-    save_under_clyde();
-    save_under_inky();
-    save_under_blinky();
-    save_under_pinky();
+    save_under_ghost(clyde_x, clyde_y, saveRectClyde);
+    save_under_ghost(inky_x, inky_y, saveRectInky);
+    save_under_ghost(pinky_x, pinky_y, saveRectPinky);
+    save_under_ghost(blinky_x, blinky_y, saveRectBlinky);
     if (mode && !blinky_caught) {
         draw_blinky_rect(GL_PURPLE1);
     } else {
@@ -169,21 +150,8 @@ static void draw_ghosts(int mode) {
     }
 }
 
-int blinky_to_center;
-int pinky_to_center;
-int inky_to_center;
-int clyde_to_center;
-
-static int mode_start;
-static int scatter;
-int frightened;
-int frightened_start;
-static int frightenedTime = 7;
-static int modeTime;
-static int modeRound;
-
 static void frightened_mode() {
-    if (timer_get_ticks() - frightened_start < frightenedTime * 1000000) {
+    if (timer_get_ticks() - frightened_start < FRIGHTENED_MODE_LENGTH * 1000000) {
         draw_ghosts(1);
     } else {
         frightened = 0;
@@ -199,6 +167,14 @@ static void frightened_mode() {
     }
 }
 
+static unsigned char switch_directions(unsigned char curMove) {
+        if (curMove == 'r') return 'l';
+        if (curMove == 'l') return 'r';
+        if (curMove == 'd') return 'u';
+        if (curMove == 'u') return 'd';
+    return '\0';
+}
+
 static void mode_change() {
     if (modeRound == 4) {
         scatter = 0;
@@ -206,22 +182,10 @@ static void mode_change() {
     }
     if (timer_get_ticks() - mode_start > modeTime * 1000000) {
         scatter = !scatter;
-        if (blinkyCurMove == 'r') blinkyCurMove = 'l';
-        if (blinkyCurMove == 'l') blinkyCurMove = 'r';
-        if (blinkyCurMove == 'd') blinkyCurMove = 'u';
-        if (blinkyCurMove == 'u') blinkyCurMove = 'd';
-        if (pinkyCurMove == 'r') pinkyCurMove = 'l';
-        if (pinkyCurMove == 'l') pinkyCurMove = 'r';
-        if (pinkyCurMove == 'd') pinkyCurMove = 'u';
-        if (pinkyCurMove == 'u') pinkyCurMove = 'd';
-        if (inkyCurMove == 'r') inkyCurMove = 'l';
-        if (inkyCurMove == 'l') inkyCurMove = 'r';
-        if (inkyCurMove == 'd') inkyCurMove = 'u';
-        if (inkyCurMove == 'u') inkyCurMove = 'd';
-        if (clydeCurMove == 'r') clydeCurMove = 'l';
-        if (clydeCurMove == 'l') clydeCurMove = 'r';
-        if (clydeCurMove == 'd') clydeCurMove = 'u';
-        if (clydeCurMove == 'u') clydeCurMove = 'd';
+        blinkyCurMove = switch_directions(blinkyCurMove);
+        pinkyCurMove = switch_directions(pinkyCurMove);
+        inkyCurMove = switch_directions(inkyCurMove);
+        clydeCurMove = switch_directions(clydeCurMove);
         if (modeTime < 20) {
             modeTime = 20;
             modeRound++;
@@ -269,6 +233,8 @@ static void clyde_init() {
 }
 
 void ghosts_init() {
+    full_tile = board_get_tile_width();
+    half_tile = full_tile / 2;
     blinky_init();
     pinky_init();
     inky_init();
@@ -335,7 +301,7 @@ static void blinky_movement() {
             blinky_x = 14*8 - 8 + 1;
             blinky_y = 17*8 - 4 + 1;
             blinky_to_center = 0;
-            blinkyStuckInBox = 16;
+            blinkyStuckInBox = -20;
             return;
         }
         if (blinkyCurMove == 'r' && !check_sides(blinky_x, blinky_y, 'r', GL_BLUE)) blinky_x = blinky_x + 1;
@@ -350,9 +316,10 @@ void blinky_move() {
     erase_blinky();
     for (int i = 0; i < 5; i++) {
         mode_change();
-        if (blinkyStuckInBox < 40) { //This mode is for when blinky is stuck in the box
-            blinkyCurMove = 'u';
+        if (blinkyStuckInBox < 24) { //This mode is for when blinky is stuck in the box
             blinkyStuckInBox++;
+            if (blinkyStuckInBox <= 0) return; 
+            blinkyCurMove = 'u';
         } else if (frightened && !blinky_caught) { //This mode is movement during frightened mode
             int targetX = pacman_get_x();
             int targetY = pacman_get_y();
@@ -377,7 +344,7 @@ static void pinky_movement() {
             pinky_x = 14*8 - 8 + 1;
             pinky_y = 17*8 - 4 + 1;
             pinky_to_center = 0;
-            pinkyStuckInBox = 16;
+            pinkyStuckInBox = -20;
             return;
         }
         if (pinkyCurMove == 'r' && !check_sides(pinky_x, pinky_y, 'r', GL_BLUE)) pinky_x = pinky_x + 1;
@@ -392,9 +359,10 @@ void pinky_move() {
     erase_pinky();
     if (timer_get_ticks() - pinkyStuckInBox < 4 * 1000000) return;
     for (int i = 0; i < 4; i++) {
-        if (pinkyStuckInBox < 40) {
-            pinkyCurMove = 'u';
+        if (pinkyStuckInBox < 24) {
             pinkyStuckInBox++;
+            if (pinkyStuckInBox < 0) return;
+            pinkyCurMove = 'u';
         } else if (frightened && !pinky_caught) {
             int targetX = pacman_get_x();
             int targetY = pacman_get_y();
@@ -425,7 +393,7 @@ static void inky_movement() {
             inky_x = 14*8 - 8 + 1;
             inky_y = 17*8 - 4 + 1;
             inky_to_center = 0;
-            inkyStuckInBox = 16;
+            inkyStuckInBox = -20;
             return;
         }
         if (inkyCurMove == 'r' && !check_sides(inky_x, inky_y, 'r', GL_BLUE)) inky_x = inky_x + 1;
@@ -441,8 +409,13 @@ void inky_move() {
     if (244 - numDots < 20) return;
     for (int i = 0; i < 4; i++) {
         if (inkyStuckInBox < 16) {
-            inkyCurMove = 'r';
+            if (inkyStuckInBox == -1) {
+                inkyStuckInBox = 16;
+                return;
+            }
             inkyStuckInBox++;
+            if (inkyStuckInBox < 0) return;
+            inkyCurMove = 'r';
         } else if (inkyStuckInBox < 40) {
             inkyCurMove = 'u';
             inkyStuckInBox++;
@@ -478,7 +451,7 @@ static void clyde_movement() {
         clyde_x = 14*8 - 8 + 1;
         clyde_y = 17*8 - 4 + 1;
         clyde_to_center = 0;
-        clydeStuckInBox = 16;
+        clydeStuckInBox = -20;
         return;
     }
     if (clydeCurMove == 'r' && !check_sides(clyde_x, clyde_y, 'r', GL_BLUE)) clyde_x = clyde_x + 1;
@@ -494,8 +467,13 @@ void clyde_move() {
     if (!(244 - numDots < 244 / 3 - 15)) {
         for (int i = 0; i < 3; i++) {
             if (clydeStuckInBox < 16) {
-                clydeCurMove = 'l';
+                if (clydeStuckInBox == -1) {
+                    clydeStuckInBox = 16;
+                    break;
+                }
                 clydeStuckInBox++;
+                if (clydeStuckInBox < 0) break;
+                clydeCurMove = 'l';
             } else if (clydeStuckInBox < 40) {
                 clydeCurMove = 'u';
                 clydeStuckInBox++;
