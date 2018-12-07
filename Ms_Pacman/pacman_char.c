@@ -161,25 +161,25 @@ static int check_for_regular_ghosts(int x, int y) {
 }
 
 static int check_for_frightened_ghosts(int x, int y) {
-        if (check_sides(x, y, 'l', GL_PURPLE1) || check_sides(x, y, 'r', GL_PURPLE1) || check_sides(x, y, 'u', GL_PURPLE1) || check_sides(x, y, 'd', GL_PURPLE1)) {
+        if (check_sides(x, y, 'l', GL_PURPLE1) || check_sides(x, y, 'r', GL_PURPLE1) || check_sides(x, y, 'u', GL_PURPLE1) || check_sides(x, y, 'd', GL_PURPLE1) || check_sides(x, y, 'l', GL_HOTPINK1) || check_sides(x, y, 'r', GL_HOTPINK1) || check_sides(x, y, 'u', GL_HOTPINK1) || check_sides(x, y, 'd', GL_HOTPINK1)) {
             blinky_caught = 1;
             frightenedPointsNotAdded = 1;
             frightened_points = frightened_points + 10;
             return 1;
         }
-        if (check_sides(x, y, 'l', GL_PURPLE2) || check_sides(x, y, 'r', GL_PURPLE2) || check_sides(x, y, 'u', GL_PURPLE2) || check_sides(x, y, 'd', GL_PURPLE2)) {
+        if (check_sides(x, y, 'l', GL_PURPLE2) || check_sides(x, y, 'r', GL_PURPLE2) || check_sides(x, y, 'u', GL_PURPLE2) || check_sides(x, y, 'd', GL_PURPLE2) || check_sides(x, y, 'l', GL_HOTPINK2) || check_sides(x, y, 'r', GL_HOTPINK2) || check_sides(x, y, 'u', GL_HOTPINK2) || check_sides(x, y, 'd', GL_HOTPINK2)) {
             pinky_caught = 1;
             frightenedPointsNotAdded = 1;
             frightened_points = frightened_points + 10;
             return 1;
         }
-        if (check_sides(x, y, 'l', GL_PURPLE3) || check_sides(x, y, 'r', GL_PURPLE3) || check_sides(x, y, 'u', GL_PURPLE3) || check_sides(x, y, 'd', GL_PURPLE3)) {
+        if (check_sides(x, y, 'l', GL_PURPLE3) || check_sides(x, y, 'r', GL_PURPLE3) || check_sides(x, y, 'u', GL_PURPLE3) || check_sides(x, y, 'd', GL_PURPLE3) || check_sides(x, y, 'l', GL_HOTPINK3) || check_sides(x, y, 'r', GL_HOTPINK3) || check_sides(x, y, 'u', GL_HOTPINK3) || check_sides(x, y, 'd', GL_HOTPINK3)) {
             inky_caught = 1;
             frightenedPointsNotAdded = 1;
             frightened_points = frightened_points + 10;
             return 1;
     }
-    if (check_sides(x, y, 'l', GL_PURPLE4) || check_sides(x, y, 'r', GL_PURPLE4) || check_sides(x, y, 'u', GL_PURPLE4) || check_sides(x, y, 'd', GL_PURPLE4)) {
+    if (check_sides(x, y, 'l', GL_PURPLE4) || check_sides(x, y, 'r', GL_PURPLE4) || check_sides(x, y, 'u', GL_PURPLE4) || check_sides(x, y, 'd', GL_PURPLE4) || check_sides(x, y, 'l', GL_HOTPINK4) || check_sides(x, y, 'r', GL_HOTPINK4) || check_sides(x, y, 'u', GL_HOTPINK4) || check_sides(x, y, 'd', GL_HOTPINK4)) {
         clyde_caught = 1;
         frightenedPointsNotAdded = 1;
         frightened_points = frightened_points + 10;

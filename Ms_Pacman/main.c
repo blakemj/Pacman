@@ -17,7 +17,7 @@ static int charWidth;
 static int charHeight;
 
 static void start_screen() {
-    char* title = pacman_printf("PACMAN");
+    char* title = pacman_printf("MS. PACMAN");
     gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(title) / 2), charHeight / 2, title, GL_YELLOW);
     char* by = pacman_printf("PROJECT BY:");
     gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(by) / 2), 3 * BOARD_HEIGHT / 4 + charHeight, by, GL_CYAN); 
@@ -96,6 +96,7 @@ void main(void)
                   frightenedPointsNotAdded = 0;
               }
               total_score = prevScore + 244 - numDots + superDotBonus + frightenedBonus;
+              if (total_score > 10000) lives++;
               for (int i = 0; i < 9; i++) {
                   gl_draw_char(i*charWidth + 8, 1, divide(i, total_score) % 10 + 48, GL_WHITE);
               }

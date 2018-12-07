@@ -11,6 +11,11 @@
 static int half_tile;
 static int full_tile;
 
+static color_t blinky_scared_color = GL_PURPLE1;
+static color_t pinky_scared_color = GL_PURPLE2;
+static color_t inky_scared_color = GL_PURPLE3;
+static color_t clyde_scared_color = GL_PURPLE4;
+
 //These are the coordinates (x, y) for all the ghosts
 static int blinky_x;
 static int blinky_y;
@@ -129,29 +134,60 @@ static void draw_ghosts(int mode) {
     save_under_ghost(pinky_x, pinky_y, saveRectPinky);
     save_under_ghost(blinky_x, blinky_y, saveRectBlinky);
     if (mode && !blinky_caught) {
-        draw_blinky_rect(GL_PURPLE1);
+        draw_blinky_rect(blinky_scared_color);
     } else {
         draw_blinky_rect(GL_RED);
     }
     if (mode && !pinky_caught) {
-        draw_pinky_rect(GL_PURPLE2);
+        draw_pinky_rect(pinky_scared_color);
     } else {
         draw_pinky_rect(GL_MAGENTA);
     }
     if (mode && !inky_caught) {
-        draw_inky_rect(GL_PURPLE3);
+        draw_inky_rect(inky_scared_color);
     } else {
         draw_inky_rect(GL_CYAN);
     }
     if (mode && !clyde_caught) {
-        draw_clyde_rect(GL_PURPLE4);
+        draw_clyde_rect(clyde_scared_color);
     } else {
         draw_clyde_rect(GL_AMBER);
     }
 }
 
+static void blink_colors() {
+    if (blinky_scared_color == GL_PURPLE1) {
+            blinky_scared_color = GL_HOTPINK1;
+    } else {
+            blinky_scared_color = GL_PURPLE1;
+    }
+    if (pinky_scared_color == GL_PURPLE2) {
+            pinky_scared_color = GL_HOTPINK2;
+    } else {
+            pinky_scared_color = GL_PURPLE2;
+    }  
+    if (inky_scared_color == GL_PURPLE3) {
+            inky_scared_color = GL_HOTPINK3;
+    } else {
+            inky_scared_color = GL_PURPLE3;
+    }  
+    if (clyde_scared_color == GL_PURPLE4) {
+            clyde_scared_color = GL_HOTPINK4;
+    } else {
+            clyde_scared_color = GL_PURPLE4;
+    }  
+}
+
 static void frightened_mode() {
     if (timer_get_ticks() - frightened_start < FRIGHTENED_MODE_LENGTH * 1000000) {
+        if (timer_get_ticks() - frightened_start > (FRIGHTENED_MODE_LENGTH - 1) * 1000000) {
+            blink_colors();
+        } else {
+            blinky_scared_color = GL_PURPLE1;
+            pinky_scared_color = GL_PURPLE2;
+            inky_scared_color = GL_PURPLE3;
+            clyde_scared_color = GL_PURPLE4;
+        }
         draw_ghosts(1);
     } else {
         frightened = 0;
@@ -163,6 +199,10 @@ static void frightened_mode() {
         pinky_to_center = 1;
         inky_to_center = 1;
         clyde_to_center = 1;
+        blinky_scared_color = GL_PURPLE1;
+        pinky_scared_color = GL_PURPLE2;
+        inky_scared_color = GL_PURPLE3;
+        clyde_scared_color = GL_PURPLE4;
         draw_ghosts(0);
     }
 }
