@@ -16,7 +16,7 @@ static int msxCoord;
 static int msyCoord;
 
 static int ghostHit;
-static int msghostHit;
+static int msghostHit = 1;
 
 int frightened_points;
 int superDotBonus;

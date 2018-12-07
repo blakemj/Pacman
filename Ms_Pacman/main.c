@@ -77,7 +77,7 @@ void main(void)
       int prevScore = 0;
       while (lives) {
           pacman_init();
-          ms_pacman_init();
+          if (twoPlayer) ms_pacman_init();
           ghosts_init();
           for (int i = 0; i < lives - 1; i++) {
               draw_pacman(i*(2*8) + 1, 34*8, pacman_get_curMove());
@@ -86,7 +86,7 @@ void main(void)
           timer_delay(3);
           while(numDots - 4 && !(pacman_hit_ghost() && ms_pacman_hit_ghost())) {
               if(!pacman_hit_ghost()) pacman_move();
-              if (!ms_pacman_hit_ghost()) ms_pacman_move();
+              if (twoPlayer && !ms_pacman_hit_ghost()) ms_pacman_move();
               blinky_move();
               pinky_move();
               inky_move();
@@ -102,7 +102,7 @@ void main(void)
               gl_swap_buffer();
               gl_draw_rect(8, 1, 9*charWidth, charHeight, GL_BLACK);
               if(pacman_hit_ghost()) erase_pacman(pacman_get_x(), pacman_get_y());
-              if(ms_pacman_hit_ghost()) erase_pacman(ms_pacman_get_x(), ms_pacman_get_y());
+              if(twoPlayer && ms_pacman_hit_ghost()) erase_pacman(ms_pacman_get_x(), ms_pacman_get_y());
           }
           erase_blinky();
           erase_pinky();

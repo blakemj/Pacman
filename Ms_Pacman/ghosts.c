@@ -296,6 +296,22 @@ static unsigned char ghost_decision(int ghostx, int ghosty, unsigned char curMov
     return curMove;
 }
 
+static int closest_pacman(int x, int y) {
+    if (pacman_hit_ghost()) return 0;
+    if (ms_pacman_hit_ghost()) return 1;
+    int targetX = pacman_get_x();
+    int targetY = pacman_get_y();
+    int pacDistance = (targetX - x) * (targetX - x) + (targetY - y) * (targetY - y);
+    targetX = ms_pacman_get_x();
+    targetY = ms_pacman_get_y();
+    int mspacDistance = (targetX - x) * (targetX - x) + (targetY - y) * (targetY - y);
+    if (mspacDistance < pacDistance) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
 static void blinky_movement() {
         if (blinky_caught && blinky_to_center) {
             blinky_x = 14*8 - 8 + 1;
@@ -333,7 +349,12 @@ void blinky_move() {
         } else if (scatter) { //This mode is movement during scatter mode
             blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, 25*8, 0);
         } else { //This mode is movement during target mode
-            blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, pacman_get_x(), pacman_get_y());
+            int isPacmanCloser = closest_pacman(blinky_x, blinky_y);
+            if (isPacmanCloser) {
+                blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, pacman_get_x(), pacman_get_y());
+            } else { 
+                blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, ms_pacman_get_x(), ms_pacman_get_y());
+            }
         }
         blinky_movement();
     }
@@ -376,8 +397,13 @@ void pinky_move() {
         } else if (scatter) {
             pinkyCurMove = ghost_decision(pinky_x, pinky_y, pinkyCurMove, 2*8, 0);
         } else {
+            int isPacmanCloser = closest_pacman(pinky_x, pinky_y);
             int targetX = pacman_get_x();
             int targetY = pacman_get_y();
+            if (!isPacmanCloser) {
+                targetX = ms_pacman_get_x();
+                targetY = ms_pacman_get_y();
+            }
             if (pacman_get_curMove() == 'r') targetX = targetX + 4*8;
             if (pacman_get_curMove() == 'l') targetX = targetX - 4*8;
             if (pacman_get_curMove() == 'd') targetY = targetY - 4*8;
@@ -432,8 +458,13 @@ void inky_move() {
         } else if (scatter) {
             inkyCurMove = ghost_decision(inky_x, inky_y, inkyCurMove, 27*8, 35*8);
         } else {
+            int isPacmanCloser = closest_pacman(inky_x, inky_y);
             int targetX = pacman_get_x();
             int targetY = pacman_get_y();
+            if (!isPacmanCloser) {
+                targetX = ms_pacman_get_x();
+                targetY = ms_pacman_get_y();
+            }
             if (pacman_get_curMove() == 'r') targetX = targetX + 2*8;
             if (pacman_get_curMove() == 'l') targetX = targetX - 2*8;
             if (pacman_get_curMove() == 'd') targetY = targetY + 2*8;
@@ -490,8 +521,13 @@ void clyde_move() {
             } else if(scatter) {
                 clydeCurMove = ghost_decision(clyde_x, clyde_y, clydeCurMove, 0, 35*8);
             } else {
+            int isPacmanCloser = closest_pacman(clyde_x, clyde_y);
                 int targetX = pacman_get_x();
                 int targetY = pacman_get_y();
+                if (!isPacmanCloser) {
+                    targetX = ms_pacman_get_x();
+                    targetY = ms_pacman_get_y();
+                }
                 int distance = (targetX - clyde_x) * (targetX - clyde_x) + (targetY - clyde_y) * (targetY - clyde_y);
                 if (distance > 8 * 8) {
                     clydeCurMove = ghost_decision(clyde_x, clyde_y, clydeCurMove, targetX, targetY);
