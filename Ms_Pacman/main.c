@@ -34,7 +34,7 @@ static int extraLife;
 *
 */
 static void start_screen() {
-    char* title = pacman_printf("MS. PACMAN");
+    char* title = pacman_printf("PACMAN");
     gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(title) / 2), charHeight / 2, title, GL_YELLOW);
     char* by = pacman_printf("PROJECT BY:");
     gl_draw_string(BOARD_WIDTH / 2 - charWidth * (strlen(by) / 2), 3 * BOARD_HEIGHT / 4 + charHeight, by, GL_CYAN); 
