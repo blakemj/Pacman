@@ -84,6 +84,7 @@ void draw_pacman(int x, int y, unsigned char move) {
     if (move == 'l') gl_draw_triangle(x + pacman_width - 5, y + pacman_width / 2 + 1, x, y + pacman_width / 2 - 3, x, y + pacman_width / 2 + 4, GL_BLACK);
     if (move == 'u') gl_draw_triangle(x + pacman_width / 2, y + pacman_width / 2 + 2, x + pacman_width / 2 - 3, y, x + pacman_width / 2 + 3, y, GL_BLACK);
     if (move == 'd') gl_draw_triangle(x + pacman_width / 2, y + pacman_width / 2 - 2, x + pacman_width / 2 - 3, y + pacman_width - 1, x + pacman_width / 2 + 3, y + pacman_width - 1, GL_BLACK);
+//    gl_swap_buffer();
 }
 
 void erase_pacman(int x, int y) {
@@ -100,7 +101,7 @@ void ms_pacman_init() {
 }
 
 void pacman_init() {
-    pacman_keyboard_init();
+//    pacman_keyboard_init();
     xCoord = 14*8 - 8 + 1;
     yCoord = 28*8 - 4 - 2*8 + 1;
     ghostHit = 0;
@@ -281,10 +282,10 @@ static void try_to_make_next_move() {
 }
 
 static void make_current_move() {
-    if (curMove == 'r' && !check_sides(xCoord, yCoord, 'r', GL_BLUE)) xCoord = xCoord + 1;
-    if (curMove == 'l' && !check_sides(xCoord, yCoord, 'l', GL_BLUE)) xCoord = xCoord - 1;
-    if (curMove == 'u' && !check_sides(xCoord, yCoord, 'u', GL_BLUE)) yCoord = yCoord - 1;
-    if (curMove == 'd' && !check_sides(xCoord, yCoord, 'd', GL_BLUE)) yCoord = yCoord + 1;
+    if (curMove == 'r' && !check_sides(xCoord, yCoord, 'r', GL_BLUE)) xCoord++;
+    if (curMove == 'l' && !check_sides(xCoord, yCoord, 'l', GL_BLUE)) xCoord--;
+    if (curMove == 'u' && !check_sides(xCoord, yCoord, 'u', GL_BLUE)) yCoord--;
+    if (curMove == 'd' && !check_sides(xCoord, yCoord, 'd', GL_BLUE)) yCoord++;
 }
 
 void pacman_move() {

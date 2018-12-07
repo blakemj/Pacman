@@ -101,12 +101,13 @@ static int determine_player_mode(int twoPlayer) {
 *
 */
 static void move_characters(int twoPlayer) {
-    if(!pacman_hit_ghost()) pacman_move();
-    if (twoPlayer && !ms_pacman_hit_ghost()) ms_pacman_move();
     blinky_move();
     pinky_move();
     inky_move();
     clyde_move();
+    if (twoPlayer && !ms_pacman_hit_ghost()) ms_pacman_move();
+    if(!pacman_hit_ghost()) pacman_move();
+    gl_swap_buffer();
 }
 
 /*
@@ -138,7 +139,6 @@ static int update_score(int prevScore) {
         extraLife++;
         display_lives();
     }
-    gl_swap_buffer();
     return prevScore;
 }
 
@@ -148,6 +148,7 @@ static int update_score(int prevScore) {
 static int update_while_still_alive(int prevScore, int twoPlayer) {
     move_characters(twoPlayer);
     prevScore = update_score(prevScore);
+    move_characters(twoPlayer);
     if(pacman_hit_ghost()) erase_pacman(pacman_get_x(), pacman_get_y());
     if(twoPlayer && ms_pacman_hit_ghost()) erase_pacman(ms_pacman_get_x(), ms_pacman_get_y());
     return prevScore;

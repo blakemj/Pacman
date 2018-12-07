@@ -3,7 +3,7 @@ OBJECTS = board.o pacman_char.o pacman_keyboard.o gl_more.o ghosts.o nes.o pacma
 
 CS107E = ../../cs107e_home/cs107e.github.io/cs107e
 CFLAGS  = -I$(CS107E)/include -g -Wall -Wpointer-arith
-CFLAGS += -Os -std=c99 -ffreestanding
+CFLAGS += -Ofast -std=c99 -ffreestanding
 CFLAGS += -mapcs-frame -fno-omit-frame-pointer -mpoke-function-name
 LDFLAGS = -nostdlib -T memmap -L. -L$(CS107E)/lib
 LDLIBS  = -lmypi -lpi -lgcc
