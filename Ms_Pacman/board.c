@@ -2,19 +2,25 @@
 #include "board.h"
 #include "gl_more.h"
 
+//
 #define BOARD_WIDTH 224
 #define BOARD_HEIGHT 288
 #define TILE_WIDTH BOARD_WIDTH / 28
 #define HALF_TILE TILE_WIDTH / 2
 #define NUMBER_OF_DOTS 244
 
+//
 color_t board_color = GL_BLUE;
 color_t ghost_door = GL_GREEN;
 color_t dot_color = GL_WHITE;
 color_t super_dot_color = GL_OFFWHITE;
 
+//
 int numDots;
 
+/*
+*
+*/
 int board_get_tile_width() {
     return TILE_WIDTH;
 }
@@ -201,6 +207,9 @@ void board_init() {
     gl_draw_line(16*TILE_WIDTH + HALF_TILE, 31*TILE_WIDTH + HALF_TILE, 25*TILE_WIDTH + HALF_TILE, 31*TILE_WIDTH + HALF_TILE, board_color);
 }
 
+/*
+*
+*/
 void draw_dots() {
     //This draws the dots in the first half of the screen (minus the second row due to super dots)
     for (int i = HALF_TILE; i < BOARD_WIDTH; i = i + TILE_WIDTH) {

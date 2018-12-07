@@ -5,10 +5,15 @@
 #include <stdarg.h>
 #include "strings.h"
 
+//
 #define INIT_BUFFER_LENGTH 1024
 
+//
 static char buf[INIT_BUFFER_LENGTH];
 
+/*
+*
+*/
 char* pacman_printf(const char *format, ...)
 {
     va_list args;

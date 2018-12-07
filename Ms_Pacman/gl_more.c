@@ -1,6 +1,9 @@
 #include "gl_more.h"
 #include "gl.h"
 
+/*
+*
+*/
 void gl_draw_circle(int xCoord, int yCoord, int width, int height, color_t color) {
    double xCenter = xCoord + (width / 2);
    double yCenter = yCoord + (height / 2);
