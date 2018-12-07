@@ -115,7 +115,7 @@ static void move_characters(int twoPlayer) {
 static void display_lives() {
     gl_draw_rect(0, 34*TILE_WIDTH, gl_get_width(), 2*TILE_WIDTH, GL_BLACK);
     for (int i = 0; i < lives - 1; i++) {
-        draw_pacman(i*(2*TILE_WIDTH) + 1, 34*TILE_WIDTH, pacman_get_curMove());
+        draw_pacman(i*(2*TILE_WIDTH) + 1, 34*TILE_WIDTH, 'r');
     }
     gl_swap_buffer();
 }
