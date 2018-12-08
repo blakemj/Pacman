@@ -18,7 +18,7 @@
 #define TOTAL_DOTS 244
 #define START_DELAY 3
 #define INIT_NUM_LIVES 3
-#define EXTRA_LIFE_SCORE 1000
+#define EXTRA_LIFE_SCORE 3000
 #define TILE_WIDTH 8
 #define NUM_SCORE_CHAR 9
 

@@ -8,7 +8,15 @@
 //
 #define TILE_WIDTH 8
 #define GHOST_WIDTH (2*TILE_WIDTH - 2)
-#define FRIGHTENED_MODE_LENGTH 7
+#define MAP_LENGTH 36*TILE_WIDTH
+#define MAP_WIDTH 28*TILE_WIDTH
+#define CENTERX (14*8 - 8 + 1)
+#define CENTERY (17*8 - 4 + 1)
+
+//
+#define FRIGHTENED_MODE_LENGTH 5
+
+//
 #define BLINKY_SCARED GL_PURPLE1
 #define BLINKY_SCARED_ALT GL_HOTPINK1
 #define PINKY_SCARED GL_PURPLE2
@@ -17,15 +25,25 @@
 #define INKY_SCARED_ALT GL_HOTPINK3
 #define CLYDE_SCARED GL_PURPLE4
 #define CLYDE_SCARED_ALT GL_HOTPINK4
+
+//
 #define BLINKY_REG_COLOR GL_RED
 #define PINKY_REG_COLOR GL_MAGENTA
 #define INKY_REG_COLOR GL_CYAN
 #define CLYDE_REG_COLOR GL_AMBER
+
+//
 #define INITIAL_SCATTER_TIME 12
 #define TARGET_TIME 20
 #define MAX_MODE_SWITCHES 4
-#define CENTERX (14*8 - 8 + 1)
-#define CENTERY (17*8 - 4 + 1)
+
+//
+#define TOTAL_NUM_DOTS 244
+
+//
+#define PINKY_INITIAL_DELAY 4
+#define INKY_INITIAL_DELAY 20
+#define CLYDE_INITIAL_DELAY (TOTAL_NUM_DOTS / 3 - 15)
 
 //
 static int half_tile;
@@ -138,6 +156,9 @@ static void save_under_ghost(int x, int y, color_t saveRect[GHOST_WIDTH][GHOST_W
     }
 }
 
+/*
+*
+*/
 void erase_ghost(int x, int y, color_t saveRect[GHOST_WIDTH][GHOST_WIDTH]) {
     for (int i = 0; i < GHOST_WIDTH; i++) {
         for (int j = 0; j < GHOST_WIDTH; j++) {
@@ -146,36 +167,32 @@ void erase_ghost(int x, int y, color_t saveRect[GHOST_WIDTH][GHOST_WIDTH]) {
     }
 }
 
+/*
+*
+*/
 void erase_blinky() {
-    for (int i = 0; i < GHOST_WIDTH; i++) {
-        for (int j = 0; j < GHOST_WIDTH; j++) {
-            gl_draw_pixel(blinky_x + i, blinky_y + j, saveRectBlinky[i][j]);
-        }  
-    }
+    erase_ghost(blinky_x, blinky_y, saveRectBlinky);
 }
 
+/*
+*
+*/
 void erase_pinky() {
-    for (int i = 0; i < GHOST_WIDTH; i++) {
-        for (int j = 0; j < GHOST_WIDTH; j++) {
-            gl_draw_pixel(pinky_x + i, pinky_y + j, saveRectPinky[i][j]);
-        }
-    }
+    erase_ghost(pinky_x, pinky_y, saveRectPinky);
 }
 
+/*
+*
+*/
 void erase_inky() {
-    for (int i = 0; i < GHOST_WIDTH; i++) {
-        for (int j = 0; j < GHOST_WIDTH; j++) {
-            gl_draw_pixel(inky_x + i, inky_y + j, saveRectInky[i][j]);
-        }
-    }
+    erase_ghost(inky_x, inky_y, saveRectInky);
 }
 
+/*
+*
+*/
 void erase_clyde() {
-    for (int i = 0; i < GHOST_WIDTH; i++) {
-        for (int j = 0; j < GHOST_WIDTH; j++) {
-            gl_draw_pixel(clyde_x + i, clyde_y + j, saveRectClyde[i][j]);
-        }
-    }
+    erase_ghost(clyde_x, clyde_y, saveRectClyde);
 }
 
 /*
@@ -440,191 +457,215 @@ static int closest_pacman(int x, int y) {
     }
 }
 
+/*
+*
+*/
 static unsigned char ghost_frightened_movement(int x, int y, unsigned char curMove) {
-            int targetX = pacman_get_x();
-            int targetY = pacman_get_y();
-            if (pacman_get_curMove() == 'r') targetX = targetX + 2*8;
-            if (pacman_get_curMove() == 'l') targetX = targetX - 2*8;
-            if (pacman_get_curMove() == 'd') targetY = targetY + 2*8;
-            if (pacman_get_curMove() == 'u') targetY = targetY - 2*8;
-            targetX = ((targetX - x) % 28*8);
-            targetY = ((targetY - y) % 36*8);
-            return ghost_decision(x, y, curMove, targetX, targetY);
+    int targetX = pacman_get_x();
+    int targetY = pacman_get_y();
+    if (pacman_get_curMove() == 'r') targetX = targetX + 2*TILE_WIDTH;
+    if (pacman_get_curMove() == 'l') targetX = targetX - 2*TILE_WIDTH;
+    if (pacman_get_curMove() == 'd') targetY = targetY + 2*TILE_WIDTH;
+    if (pacman_get_curMove() == 'u') targetY = targetY - 2*TILE_WIDTH;
+    targetX = ((targetX - x) % MAP_WIDTH);
+    targetY = ((targetY - y) % MAP_LENGTH);
+    return ghost_decision(x, y, curMove, targetX, targetY);
 }
 
 /*
 *
 */
 static void blinky_movement() {
-        //This moves blinky to the center and resets the movement variables
-        if (blinky_caught && blinky_to_center) {
-            blinky_x = CENTERX;
-            blinky_y = CENTERY;
-            blinky_to_center = 0;
-            blinkyStuckInBox = -20;
-            return;
-        }
-        //This moves the ghost according to their current direction
-        if (blinkyCurMove == 'r' && !check_sides(blinky_x, blinky_y, 'r', GL_BLUE)) blinky_x = blinky_x + 1;
-        if (blinkyCurMove == 'l' && !check_sides(blinky_x, blinky_y, 'l', GL_BLUE)) blinky_x = blinky_x - 1;
-        if (blinkyCurMove == 'u' && !check_sides(blinky_x, blinky_y, 'u',GL_BLUE)) blinky_y = blinky_y - 1;
-        if (blinkyCurMove == 'd' && !check_sides(blinky_x, blinky_y, 'd', GL_BLUE)) blinky_y = blinky_y + 1;
-        //This loops the ghost through the warp tunnels
-        if (blinky_x <= 0) blinky_x = gl_get_width() - 1;
-        if (blinky_x >= gl_get_width()) blinky_x = 1;
+    //This moves blinky to the center and resets the movement variables
+    if (blinky_caught && blinky_to_center) {
+        blinky_x = CENTERX;
+        blinky_y = CENTERY;
+        blinky_to_center = 0;
+        blinkyStuckInBox = -20;
+        return;
+    }
+    //This moves the ghost according to their current direction
+    if (blinkyCurMove == 'r' && !check_sides(blinky_x, blinky_y, 'r', GL_BLUE)) blinky_x = blinky_x + 1;
+    if (blinkyCurMove == 'l' && !check_sides(blinky_x, blinky_y, 'l', GL_BLUE)) blinky_x = blinky_x - 1;
+    if (blinkyCurMove == 'u' && !check_sides(blinky_x, blinky_y, 'u',GL_BLUE)) blinky_y = blinky_y - 1;
+    if (blinkyCurMove == 'd' && !check_sides(blinky_x, blinky_y, 'd', GL_BLUE)) blinky_y = blinky_y + 1;
+    //This loops the ghost through the warp tunnels
+    if (blinky_x <= 0) blinky_x = gl_get_width() - 1;
+    if (blinky_x >= gl_get_width()) blinky_x = 1;
 }
 
+/*
+*
+*/
+static void blinky_target_mode() {
+    int isPacmanCloser = closest_pacman(blinky_x, blinky_y);
+    if (isPacmanCloser) {
+        blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, pacman_get_x(), pacman_get_y());
+    } else {
+        blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, ms_pacman_get_x(), ms_pacman_get_y());
+    }
+}
+
+/*
+*
+*/
 void blinky_move() {
-    erase_blinky();
+    erase_ghost(blinky_x, blinky_y, saveRectBlinky);
     for (int i = 0; i < 5; i++) {
         mode_change();
-        if (blinkyStuckInBox < 24) { //This mode is for when blinky is stuck in the box
+        if (blinkyStuckInBox < 3*TILE_WIDTH) { //This mode is for when blinky is stuck in the box
             blinkyStuckInBox++;
             if (blinkyStuckInBox <= 0) return; 
             blinkyCurMove = 'u';
         } else if (frightened && !blinky_caught) { //This mode is movement during frightened mode
-    //        int targetX = pacman_get_x();
-  //          int targetY = pacman_get_y();
-//            if (pacman_get_curMove() == 'r') targetX = targetX + 2*8;
-          //  if (pacman_get_curMove() == 'l') targetX = targetX - 2*8;
-        //    if (pacman_get_curMove() == 'd') targetY = targetY + 2*8;
-      //      if (pacman_get_curMove() == 'u') targetY = targetY - 2*8;
-    //        targetX = ((targetX - blinky_x) % 28*8);
-  //          targetY = ((targetY - blinky_y) % 36*8);
             blinkyCurMove = ghost_frightened_movement(blinky_x, blinky_y, blinkyCurMove);
-//ghost_decision(blinky_x, blinky_y, blinkyCurMove, targetX, targetY);
         } else if (scatter) { //This mode is movement during scatter mode
-            blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, 25*8, 0);
+            blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, 25*TILE_WIDTH, 0);
         } else { //This mode is movement during target mode
-            int isPacmanCloser = closest_pacman(blinky_x, blinky_y);
-            if (isPacmanCloser) {
-                blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, pacman_get_x(), pacman_get_y());
-            } else { 
-                blinkyCurMove = ghost_decision(blinky_x, blinky_y, blinkyCurMove, ms_pacman_get_x(), ms_pacman_get_y());
-            }
+            blinky_target_mode();
         }
         blinky_movement();
     }
 }
 
+/*
+*
+*/
 static void pinky_movement() {
-        if (pinky_caught && pinky_to_center) {
-            pinky_x = CENTERX;
-            pinky_y = CENTERY;
-            pinky_to_center = 0;
-            pinkyStuckInBox = -20;
-            return;
-        }
-        if (pinkyCurMove == 'r' && !check_sides(pinky_x, pinky_y, 'r', GL_BLUE)) pinky_x = pinky_x + 1;
-        if (pinkyCurMove == 'l' && !check_sides(pinky_x, pinky_y, 'l', GL_BLUE)) pinky_x = pinky_x - 1;
-        if (pinkyCurMove == 'u' && !check_sides(pinky_x, pinky_y, 'u',GL_BLUE)) pinky_y = pinky_y - 1;
-        if (pinkyCurMove == 'd' && !check_sides(pinky_x, pinky_y, 'd', GL_BLUE)) pinky_y = pinky_y + 1;
-        if (pinky_x <= 0) pinky_x = gl_get_width() - 1;
-        if (pinky_x >= gl_get_width()) pinky_x = 1;
+    //
+    if (pinky_caught && pinky_to_center) {
+        pinky_x = CENTERX;
+        pinky_y = CENTERY;
+        pinky_to_center = 0;
+        pinkyStuckInBox = -20;
+        return;
+    }
+    //
+    if (pinkyCurMove == 'r' && !check_sides(pinky_x, pinky_y, 'r', GL_BLUE)) pinky_x = pinky_x + 1;
+    if (pinkyCurMove == 'l' && !check_sides(pinky_x, pinky_y, 'l', GL_BLUE)) pinky_x = pinky_x - 1;
+    if (pinkyCurMove == 'u' && !check_sides(pinky_x, pinky_y, 'u',GL_BLUE)) pinky_y = pinky_y - 1;
+    if (pinkyCurMove == 'd' && !check_sides(pinky_x, pinky_y, 'd', GL_BLUE)) pinky_y = pinky_y + 1;
+    //
+    if (pinky_x <= 0) pinky_x = gl_get_width() - 1;
+    if (pinky_x >= gl_get_width()) pinky_x = 1;
 }
 
+/*
+*
+*/
+static void pinky_target_mode() {
+    int isPacmanCloser = closest_pacman(pinky_x, pinky_y);
+    int targetX = pacman_get_x();
+    int targetY = pacman_get_y();
+    if (!isPacmanCloser) {
+        targetX = ms_pacman_get_x();
+        targetY = ms_pacman_get_y();
+    }
+    if (pacman_get_curMove() == 'r') targetX = targetX + 4*TILE_WIDTH;
+    if (pacman_get_curMove() == 'l') targetX = targetX - 4*TILE_WIDTH;
+    if (pacman_get_curMove() == 'd') targetY = targetY - 4*TILE_WIDTH;
+    if (pacman_get_curMove() == 'u') targetY = targetY - 4*TILE_WIDTH;
+    pinkyCurMove = ghost_decision(pinky_x, pinky_y, pinkyCurMove, targetX, targetY);
+}
+
+/*
+*
+*/
 void pinky_move() {
-    erase_pinky();
-    if (timer_get_ticks() - pinkyStuckInBox < 4 * 1000000) return;
+    erase_ghost(pinky_x, pinky_y, saveRectPinky);
+    if (timer_get_ticks() - pinkyStuckInBox < PINKY_INITIAL_DELAY * 1000000) return;
     for (int i = 0; i < 4; i++) {
-        if (pinkyStuckInBox < 24) {
+        if (pinkyStuckInBox < 3*TILE_WIDTH) {
             pinkyStuckInBox++;
             if (pinkyStuckInBox < 0) return;
             pinkyCurMove = 'u';
         } else if (frightened && !pinky_caught) {
-            int targetX = pacman_get_x();
-            int targetY = pacman_get_y();
-            if (pacman_get_curMove() == 'r') targetX = targetX + 2*8;
-            if (pacman_get_curMove() == 'l') targetX = targetX - 2*8;
-            if (pacman_get_curMove() == 'd') targetY = targetY + 2*8;
-            if (pacman_get_curMove() == 'u') targetY = targetY - 2*8;
-            targetX = ((targetX - pinky_x) % 28*8);
-            targetY = ((targetY - pinky_y) % 36*8);
-            pinkyCurMove = ghost_decision(pinky_x, pinky_y, pinkyCurMove, targetX, targetY);
+            pinkyCurMove = ghost_frightened_movement(pinky_x, pinky_y, pinkyCurMove);
         } else if (scatter) {
-            pinkyCurMove = ghost_decision(pinky_x, pinky_y, pinkyCurMove, 2*8, 0);
+            pinkyCurMove = ghost_decision(pinky_x, pinky_y, pinkyCurMove, 2*TILE_WIDTH, 0);
         } else {
-            int isPacmanCloser = closest_pacman(pinky_x, pinky_y);
-            int targetX = pacman_get_x();
-            int targetY = pacman_get_y();
-            if (!isPacmanCloser) {
-                targetX = ms_pacman_get_x();
-                targetY = ms_pacman_get_y();
-            }
-            if (pacman_get_curMove() == 'r') targetX = targetX + 4*8;
-            if (pacman_get_curMove() == 'l') targetX = targetX - 4*8;
-            if (pacman_get_curMove() == 'd') targetY = targetY - 4*8;
-            if (pacman_get_curMove() == 'u') targetY = targetY - 4*8;
-            pinkyCurMove = ghost_decision(pinky_x, pinky_y, pinkyCurMove, targetX, targetY);
+            pinky_target_mode();
         }
         pinky_movement();
     }
 }
 
+/*
+*
+*/
 static void inky_movement() {
-        if (inky_caught && inky_to_center) {
-            inky_x = CENTERX;
-            inky_y = CENTERY;
-            inky_to_center = 0;
-            inkyStuckInBox = -20;
-            return;
-        }
-        if (inkyCurMove == 'r' && !check_sides(inky_x, inky_y, 'r', GL_BLUE)) inky_x = inky_x + 1;
-        if (inkyCurMove == 'l' && !check_sides(inky_x, inky_y, 'l', GL_BLUE)) inky_x = inky_x - 1;
-        if (inkyCurMove == 'u' && !check_sides(inky_x, inky_y, 'u',GL_BLUE)) inky_y = inky_y - 1;
-        if (inkyCurMove == 'd' && !check_sides(inky_x, inky_y, 'd', GL_BLUE)) inky_y = inky_y + 1;
-        if (inky_x <= 0) inky_x = gl_get_width() - 1;
-        if (inky_x >= gl_get_width()) inky_x = 1;
+    //
+    if (inky_caught && inky_to_center) {
+        inky_x = CENTERX;
+        inky_y = CENTERY;
+        inky_to_center = 0;
+        inkyStuckInBox = -20;
+        return;
+    }
+    //
+    if (inkyCurMove == 'r' && !check_sides(inky_x, inky_y, 'r', GL_BLUE)) inky_x = inky_x + 1;
+    if (inkyCurMove == 'l' && !check_sides(inky_x, inky_y, 'l', GL_BLUE)) inky_x = inky_x - 1;
+    if (inkyCurMove == 'u' && !check_sides(inky_x, inky_y, 'u',GL_BLUE)) inky_y = inky_y - 1;
+    if (inkyCurMove == 'd' && !check_sides(inky_x, inky_y, 'd', GL_BLUE)) inky_y = inky_y + 1;
+    //
+    if (inky_x <= 0) inky_x = gl_get_width() - 1;
+    if (inky_x >= gl_get_width()) inky_x = 1;
 }
 
+/*
+*
+*/
+static void inky_target_mode() {
+    int isPacmanCloser = closest_pacman(inky_x, inky_y);
+    int targetX = pacman_get_x();
+    int targetY = pacman_get_y();
+    if (!isPacmanCloser) {
+        targetX = ms_pacman_get_x();
+        targetY = ms_pacman_get_y();
+    }
+    if (pacman_get_curMove() == 'r') targetX = targetX + 2*TILE_WIDTH;
+    if (pacman_get_curMove() == 'l') targetX = targetX - 2*TILE_WIDTH;
+    if (pacman_get_curMove() == 'd') targetY = targetY + 2*TILE_WIDTH;
+    if (pacman_get_curMove() == 'u') targetY = targetY - 2*TILE_WIDTH;
+    targetX = blinky_x + (targetX - blinky_x) * 2;
+    targetY = blinky_y + (targetY - blinky_y) * 2;
+    inkyCurMove = ghost_decision(inky_x, inky_y, inkyCurMove, targetX, targetY);
+}
+
+/*
+*
+*/
 void inky_move() {
-    erase_inky();
-    if (244 - numDots < 20) return;
+    erase_ghost(inky_x, inky_y, saveRectInky);
+    if (TOTAL_NUM_DOTS - numDots < INKY_INITIAL_DELAY) return;
     for (int i = 0; i < 4; i++) {
-        if (inkyStuckInBox < 16) {
+        if (inkyStuckInBox < 2*TILE_WIDTH) {
             if (inkyStuckInBox == -1) {
-                inkyStuckInBox = 16;
+                inkyStuckInBox = 2*TILE_WIDTH;
                 return;
             }
             inkyStuckInBox++;
             if (inkyStuckInBox < 0) return;
             inkyCurMove = 'r';
-        } else if (inkyStuckInBox < 40) {
+        } else if (inkyStuckInBox < 5*TILE_WIDTH) {
             inkyCurMove = 'u';
             inkyStuckInBox++;
         } else if (frightened && !inky_caught) {
-            int targetX = pacman_get_x();
-            int targetY = pacman_get_y();
-            if (pacman_get_curMove() == 'r') targetX = targetX + 2*8;
-            if (pacman_get_curMove() == 'l') targetX = targetX - 2*8;
-            if (pacman_get_curMove() == 'd') targetY = targetY + 2*8;
-            if (pacman_get_curMove() == 'u') targetY = targetY - 2*8;
-            targetX = ((targetX - inky_x) % 28*8);
-            targetY = ((targetY - inky_y) % 36*8);
-            inkyCurMove = ghost_decision(inky_x, inky_y, inkyCurMove, targetX, targetY);
+            inkyCurMove = ghost_frightened_movement(inky_x, inky_y, inkyCurMove);
         } else if (scatter) {
             inkyCurMove = ghost_decision(inky_x, inky_y, inkyCurMove, 27*8, 35*8);
         } else {
-            int isPacmanCloser = closest_pacman(inky_x, inky_y);
-            int targetX = pacman_get_x();
-            int targetY = pacman_get_y();
-            if (!isPacmanCloser) {
-                targetX = ms_pacman_get_x();
-                targetY = ms_pacman_get_y();
-            }
-            if (pacman_get_curMove() == 'r') targetX = targetX + 2*8;
-            if (pacman_get_curMove() == 'l') targetX = targetX - 2*8;
-            if (pacman_get_curMove() == 'd') targetY = targetY + 2*8;
-            if (pacman_get_curMove() == 'u') targetY = targetY - 2*8;
-            targetX = blinky_x + (targetX - blinky_x) * 2;
-            targetY = blinky_y + (targetY - blinky_y) * 2;
-            inkyCurMove = ghost_decision(inky_x, inky_y, inkyCurMove, targetX, targetY);
+            inky_target_mode();
         }
         inky_movement();
     }
 }
 
+/*
+*
+*/
 static void clyde_movement() {
+    //
     if (clyde_caught && clyde_to_center) {
         clyde_x = CENTERX;
         clyde_y = CENTERY;
@@ -632,59 +673,64 @@ static void clyde_movement() {
         clydeStuckInBox = -20;
         return;
     }
+    //
     if (clydeCurMove == 'r' && !check_sides(clyde_x, clyde_y, 'r', GL_BLUE)) clyde_x = clyde_x + 1;
     if (clydeCurMove == 'l' && !check_sides(clyde_x, clyde_y, 'l', GL_BLUE)) clyde_x = clyde_x - 1;
     if (clydeCurMove == 'u' && !check_sides(clyde_x, clyde_y, 'u',GL_BLUE)) clyde_y = clyde_y - 1;
     if (clydeCurMove == 'd' && !check_sides(clyde_x, clyde_y, 'd', GL_BLUE)) clyde_y = clyde_y + 1;
+    //
     if (clyde_x <= 0) clyde_x = gl_get_width() - 1;
     if (clyde_x >= gl_get_width()) clyde_x = 1;
 }
 
+/*
+*
+*/
+static void clyde_target_mode() {
+    int isPacmanCloser = closest_pacman(clyde_x, clyde_y);
+    int targetX = pacman_get_x();
+    int targetY = pacman_get_y();
+    if (!isPacmanCloser) {
+        targetX = ms_pacman_get_x();
+        targetY = ms_pacman_get_y();
+    }   
+    int distance = (targetX - clyde_x) * (targetX - clyde_x) + (targetY - clyde_y) * (targetY - clyde_y);
+    if (distance > 8 * TILE_WIDTH) {
+        clydeCurMove = ghost_decision(clyde_x, clyde_y, clydeCurMove, targetX, targetY);
+    } else {
+        clydeCurMove = ghost_decision(clyde_x, clyde_y, clydeCurMove, 0, 35*TILE_WIDTH);
+    }
+}
+
+/*
+*
+*/
 void clyde_move() {
-    erase_clyde();
-    if (!(244 - numDots < 244 / 3 - 15)) {
+    erase_ghost(clyde_x, clyde_y, saveRectClyde);
+    if (!(TOTAL_NUM_DOTS - numDots < CLYDE_INITIAL_DELAY)) {
         for (int i = 0; i < 3; i++) {
-            if (clydeStuckInBox < 16) {
+            if (clydeStuckInBox < 2*TILE_WIDTH) {
                 if (clydeStuckInBox == -1) {
-                    clydeStuckInBox = 16;
+                    clydeStuckInBox = 2*TILE_WIDTH;
                     break;
                 }
                 clydeStuckInBox++;
                 if (clydeStuckInBox < 0) break;
                 clydeCurMove = 'l';
-            } else if (clydeStuckInBox < 40) {
+            } else if (clydeStuckInBox < 5*TILE_WIDTH) {
                 clydeCurMove = 'u';
                 clydeStuckInBox++;
             } else if (frightened && !clyde_caught) { 
-                int targetX = pacman_get_x();
-                int targetY = pacman_get_y();
-                if (pacman_get_curMove() == 'r') targetX = targetX + 2*8;
-                if (pacman_get_curMove() == 'l') targetX = targetX - 2*8;
-                if (pacman_get_curMove() == 'd') targetY = targetY + 2*8;
-                if (pacman_get_curMove() == 'u') targetY = targetY - 2*8;
-                targetX = ((targetX - clyde_x) % 28*8);
-                targetY = ((targetY - clyde_y) % 36*8);
-                clydeCurMove = ghost_decision(clyde_x, clyde_y, clydeCurMove, targetX, targetY);
+                clydeCurMove = ghost_frightened_movement(clyde_x, clyde_y, clydeCurMove);
             } else if(scatter) {
-                clydeCurMove = ghost_decision(clyde_x, clyde_y, clydeCurMove, 0, 35*8);
+                clydeCurMove = ghost_decision(clyde_x, clyde_y, clydeCurMove, 0, 35*TILE_WIDTH);
             } else {
-            int isPacmanCloser = closest_pacman(clyde_x, clyde_y);
-                int targetX = pacman_get_x();
-                int targetY = pacman_get_y();
-                if (!isPacmanCloser) {
-                    targetX = ms_pacman_get_x();
-                    targetY = ms_pacman_get_y();
-                }
-                int distance = (targetX - clyde_x) * (targetX - clyde_x) + (targetY - clyde_y) * (targetY - clyde_y);
-                if (distance > 8 * 8) {
-                    clydeCurMove = ghost_decision(clyde_x, clyde_y, clydeCurMove, targetX, targetY);
-                } else {
-                    clydeCurMove = ghost_decision(clyde_x, clyde_y, clydeCurMove, 0, 35*8);
-                }
+                clyde_target_mode();
             }
             clyde_movement();
         }
     }
+    //Since clyde is the last ghost drawn, all the ghosts are drawn here
     if (frightened) {
         frightened_mode();
     } else {
