@@ -11,15 +11,11 @@
 #include "pacman_printf.h"
 
 //
-#define BOARD_WIDTH 224
-#define BOARD_HEIGHT 288
 #define GAME_OVER_DELAY 5
-#define NUM_SUPER_DOTS 4
-#define TOTAL_DOTS 244
+#define TOTAL_DOTS NUMBER_OF_DOTS
 #define START_DELAY 3
 #define INIT_NUM_LIVES 3
 #define EXTRA_LIFE_SCORE 3000
-#define TILE_WIDTH 8
 #define NUM_SCORE_CHAR 9
 
 //
@@ -158,6 +154,7 @@ static int update_while_still_alive(int prevScore, int twoPlayer) {
 *
 */
 static int reset_between_lives(int prevScore, int twoPlayer) {
+    timer_delay(1);
     erase_everything(twoPlayer);
     if (pacman_hit_ghost() && ms_pacman_hit_ghost()) lives--;
     prevScore = prevScore + superDotBonus;
@@ -196,7 +193,7 @@ void main(void)
           ghosts_init();
           display_lives();
           timer_delay(START_DELAY);
-          while(numDots - NUM_SUPER_DOTS && !(pacman_hit_ghost() && ms_pacman_hit_ghost())) {
+          while(numDots - NUM_SUPER_DOTS > 0 && !(pacman_hit_ghost() && ms_pacman_hit_ghost())) {
               prevScore = update_while_still_alive(prevScore, twoPlayer);
           }
           prevScore = reset_between_lives(prevScore, twoPlayer);

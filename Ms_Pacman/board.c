@@ -3,13 +3,6 @@
 #include "gl_more.h"
 
 //
-#define BOARD_WIDTH 224
-#define BOARD_HEIGHT 288
-#define TILE_WIDTH BOARD_WIDTH / 28
-#define HALF_TILE TILE_WIDTH / 2
-#define NUMBER_OF_DOTS 244
-
-//
 color_t board_color = GL_BLUE;
 color_t ghost_door = GL_GREEN;
 color_t dot_color = GL_WHITE;
@@ -240,10 +233,10 @@ void draw_dots() {
     gl_draw_pixel(12*TILE_WIDTH + HALF_TILE, 6*TILE_WIDTH + HALF_TILE, dot_color);
     gl_draw_pixel(15*TILE_WIDTH + HALF_TILE, 6*TILE_WIDTH + HALF_TILE, dot_color);
     //This draws the super dots
-    gl_draw_rect(TILE_WIDTH, 6*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH, super_dot_color);
-    gl_draw_rect(26*TILE_WIDTH, 6*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH, super_dot_color);
-    gl_draw_rect(TILE_WIDTH, 26*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH, super_dot_color);
-    gl_draw_rect(26*TILE_WIDTH, 26*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH, super_dot_color);
+    gl_draw_circle(TILE_WIDTH, 6*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH, super_dot_color);
+    gl_draw_circle(26*TILE_WIDTH, 6*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH, super_dot_color);
+    gl_draw_circle(TILE_WIDTH, 26*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH, super_dot_color);
+    gl_draw_circle(26*TILE_WIDTH, 26*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH, super_dot_color);
     numDots = NUMBER_OF_DOTS;
 }
 

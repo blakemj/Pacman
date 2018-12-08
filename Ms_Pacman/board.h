@@ -3,6 +3,14 @@
 
 #include "gl.h"
 
+#define BOARD_WIDTH 224
+#define BOARD_HEIGHT 288
+#define TILE_WIDTH BOARD_WIDTH / 28
+#define HALF_TILE TILE_WIDTH / 2
+
+#define NUMBER_OF_DOTS 244
+#define NUM_SUPER_DOTS 4
+
 int board_get_tile_width();
 
 void board_init(void);
