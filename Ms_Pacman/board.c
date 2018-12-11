@@ -2,17 +2,17 @@
 #include "board.h"
 #include "gl_more.h"
 
-//
+//These variables define the colors for the given board componenets
 color_t board_color = GL_BLUE;
 color_t ghost_door = GL_GREEN;
 color_t dot_color = GL_WHITE;
 color_t super_dot_color = GL_OFFWHITE;
 
-//
+//This keeps track of the number of dots left
 int numDots;
 
 /*
-*
+* This function will return the width of a tile
 */
 int board_get_tile_width() {
     return TILE_WIDTH;
@@ -201,7 +201,8 @@ void board_init() {
 }
 
 /*
-*
+* This function will draw all of the dots on the board. This will also draw the four super dots in their given place on the
+* board.
 */
 void draw_dots() {
     //This draws the dots in the first half of the screen (minus the second row due to super dots)

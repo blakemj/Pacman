@@ -3,18 +3,18 @@
 #include "gpio.h"
 #include "gpioextra.h"
 
-//
+//These define the GPIO pins that the P1 controller is hooked up to
 const unsigned int CLK  = GPIO_PIN20;
 const unsigned int DATA = GPIO_PIN21;
 const unsigned int LATCH = GPIO_PIN19;
 
-//
+//These define the GPIO pins that the P2 controller is hooked up to
 const unsigned int CLK2  = GPIO_PIN27;
 const unsigned int DATA2 = GPIO_PIN17;
 const unsigned int LATCH2 = GPIO_PIN22;
 
 /*
-*
+* This will initialize the controllers by setting the correct pins to input/output
 */
 void nes_init(void) 
 {
@@ -30,7 +30,7 @@ void nes_init(void)
     gpio_set_output(LATCH2);
 }
 
-//
+//See header
 volatile int a_button;
 volatile int b_button;
 volatile int select_button;
@@ -40,7 +40,7 @@ volatile int down_button;
 volatile int left_button;
 volatile int right_button;
 
-//
+//See header
 volatile int msa_button;
 volatile int msb_button;
 volatile int msselect_button;
@@ -51,7 +51,10 @@ volatile int msleft_button;
 volatile int msright_button;
 
 /*
-*
+* This will read the bits for controller 2--This will write a high to the latch, which will signal the controller
+* to get the state of the buttons, which are all 8 stored in a scancode. This will then read the first bit and store
+* it in the correct variable, then will send a high then a low to the clock to signal the controller to send the next
+* bit. This does this in a loop for all 8 bits.
 */
 void read_nes_controller_two() {
     gpio_write(LATCH2, 1);
@@ -72,7 +75,7 @@ void read_nes_controller_two() {
 }
 
 /*
-*
+* See read_nes_contoller_two()
 */
 void read_nes_controller() {
     gpio_write(LATCH, 1);

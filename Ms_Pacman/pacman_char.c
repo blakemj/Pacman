@@ -8,66 +8,70 @@
 #include "ghosts.h"
 #include "nes.h"
 
-//
+//This defines the width of pacman
 #define pacman_width (2*TILE_WIDTH - 2)
 
+//This defines where the center is (aka where the pacman characters start).
 #define CENTERX (14*TILE_WIDTH - TILE_WIDTH + 1) 
 #define CENTERY (28*TILE_WIDTH - 4 - 2*TILE_WIDTH + 1)
 
+//This defines the initial value of the frightened points bonus per ghost
 #define FRIGHTENED_POINTS_VALUE 10
-//
+
+//This keeps track of the x and y coordinates of the ghosts
 static int xCoord;
 static int yCoord;
 static int msxCoord;
 static int msyCoord;
 
-//
+//This keeps track of whether a ghost was hit by each pacman
 static int ghostHit;
 static int msghostHit = 1; //Starts at 1 so that one player does not rely on Ms. Pacman
 
-//
+//These keep track of the point bonuses and are used beyond this file
 int frightened_points;
 int superDotBonus;
 int frightenedPointsNotAdded;
 
-//
+//These variables keep track of the next move asked by the user and the current move that the pacman character is making
 static unsigned char nextMove;
 static unsigned char curMove;
 static unsigned char msnextMove;
 static unsigned char mscurMove;
 
-//
+//This returns whether Ms. Pacman has hit a ghost
 int ms_pacman_hit_ghost() {
     return msghostHit;
 }
 
-//
+//This returns the x value of Ms. Pacman.
 int ms_pacman_get_x() {
     return msxCoord;
 }
 
-//
+//This returns the y value of Ms. Pacman
 int ms_pacman_get_y() {
     return msyCoord;
 }
 
-//
+//This returns whether pacman has hit a ghost
 int pacman_hit_ghost() {
     return ghostHit;
 }
 
-//
+//This returns the x value of pacman
 int pacman_get_x() {
     return xCoord;
 }
 
-//
+//This returns the y value of pacman
 int pacman_get_y() {
     return yCoord;
 }
 
 /*
-*
+* This funciton is used to draw Ms. Pacman. Ms. Pacman is almost the same as drawing regular pacman, except she has a pink bow. This
+* bow is drawn in the correct corner depending on Ms. Pacman's direction (since she turns according to her direction).
 */
 void draw_ms_pacman(int x, int y) {
     draw_pacman(msxCoord, msyCoord, mscurMove);
@@ -97,7 +101,8 @@ void draw_ms_pacman(int x, int y) {
 }
 
 /*
-*
+* This function draws a pacman character to the screen. This is done by drawing a yellow circle, with a triangle cut out from Pacman in the direction that
+* the character is moving in. This creates a mouth. This is called by the main file to draw the lives as well
 */
 void draw_pacman(int x, int y, unsigned char move) {
     gl_draw_circle(x, y, pacman_width, pacman_width, GL_YELLOW);
@@ -112,6 +117,9 @@ void erase_pacman(int x, int y) {
     gl_draw_rect(x, y, pacman_width, pacman_width, GL_BLACK);
 }
 
+/*
+* This funciton will initialize Ms. Pacman in the center of the screen and will set her current direction to left
+*/
 void ms_pacman_init() {
     msxCoord = CENTERX;
     msyCoord = CENTERY;
@@ -121,6 +129,9 @@ void ms_pacman_init() {
     draw_ms_pacman(xCoord, yCoord); 
 }
 
+/*
+* This funciton will initialize Pacman in the center of the screen and will set his current direction to right
+*/
 void pacman_init() {
 // Add this if wishing to use the keyboard   pacman_keyboard_init(); 
     xCoord = CENTERX;
@@ -133,12 +144,12 @@ void pacman_init() {
     draw_pacman(xCoord, yCoord, curMove); 
 }
 
-//
+//This function will return pacman's current move
 unsigned char pacman_get_curMove() {
     return curMove;
 }
 
-//
+//This function will return Ms. Pacman's current move
 unsigned char ms_pacman_get_curMove() {
     return mscurMove;
 }
@@ -169,6 +180,9 @@ int check_sides(int x, int y, unsigned char direction, color_t color) {
     return 0;
 }
 
+/*
+* This function will check all the sides of whichever pacman's x and y value is passed in for the current color of the ghost
+*/
 static int is_ghost_hit(int x, int y, color_t ghost_color) {
     if (check_sides(x, y, 'l', ghost_color)) return 1;
     if (check_sides(x, y, 'r', ghost_color)) return 1;
@@ -177,6 +191,10 @@ static int is_ghost_hit(int x, int y, color_t ghost_color) {
     return 0;
 }
 
+/*
+* This function will check if a ghost has been hit by the pacman given by the x and y. This will check for all of the ghosts' regular
+* colors during a regular, non-frightenend mode.
+*/
 static int check_for_regular_ghosts(int x, int y) {
     if (is_ghost_hit(x, y, BLINKY_REG_COLOR)) return 1;
     if (is_ghost_hit(x, y, PINKY_REG_COLOR)) return 1;
@@ -186,7 +204,9 @@ static int check_for_regular_ghosts(int x, int y) {
 }
 
 /*
-*
+* This function will check all the sides for a frightened ghost. This will check for both each of the ghosts' respecitve scared color, as well as their
+* alternate that comes up when the ghost is flashing to signal the end of frightened mode. If any happen to be true, then the respective ghost will be
+* marked as caught, and the frightened points bonus will increase by the value of the frightened points.
 */
 static int check_for_frightened_ghosts(int x, int y) {
         if (check_sides(x, y, 'l', BLINKY_SCARED) || check_sides(x, y, 'r', BLINKY_SCARED) || check_sides(x, y, 'u', BLINKY_SCARED) || check_sides(x, y, 'd', BLINKY_SCARED) || check_sides(x, y, 'l', BLINKY_SCARED_ALT) || check_sides(x, y, 'r', BLINKY_SCARED_ALT) || check_sides(x, y, 'u', BLINKY_SCARED_ALT) || check_sides(x, y, 'd', BLINKY_SCARED_ALT)) {
@@ -217,7 +237,8 @@ static int check_for_frightened_ghosts(int x, int y) {
 }
 
 /*
-*
+* This function will check the sides of the pacman character for dots. If any of the sides come back with the color of a dot, then the number of
+* dots left will decrease by one. If any of the super dots are found, then the bonus will be added, and the ghosts will be set into frightened mode.
 */
 static void check_for_dots(int x, int y, unsigned char move) {
     if (check_sides(x, y, move, GL_WHITE)) numDots--;
@@ -252,6 +273,7 @@ static void user_set_direction_keyboard() {
 }
 */
 
+//This function will read the NES controller for player 1, and will update the asked for next move so that it is saved
 static void nes_player_1() {
     read_nes_controller();
     if (!left_button) {
@@ -265,6 +287,7 @@ static void nes_player_1() {
     }
 }
 
+//See nes_player_1
 static void nes_player_2() {
     read_nes_controller_two();
     if (!msleft_button) {
@@ -278,13 +301,16 @@ static void nes_player_2() {
     }
 }
 
+//This is called so that the user can use the nes controller to set the direction
 static void user_set_direction_nes() {
     nes_player_1();
     nes_player_2();
 }
 
 /*
-*
+* This function will check the next move as asked for by the user, and will try all of the sides. This will continue to happen unless the next move
+* asked for is changed (in which case it will repeat with that one), or until it is able to make the next move, in which case the current move will
+* be set.
 */
 static void mstry_to_make_next_move() {
     if (msnextMove == 'r' && !check_sides(msxCoord, msyCoord, 'r', GL_BLUE)) mscurMove = 'r';
@@ -294,7 +320,7 @@ static void mstry_to_make_next_move() {
 }
 
 /*
-*
+* This will check the side that the current move is in, and will move Ms. Pacman accordingly (moving one pixel in the direction)
 */
 static void msmake_current_move() {
     if (mscurMove == 'r' && !check_sides(msxCoord, msyCoord, 'r', GL_BLUE)) msxCoord = msxCoord + 1;
@@ -304,7 +330,11 @@ static void msmake_current_move() {
 }
 
 /*
-*
+* This function will move Ms. Pacman across the screen. First, her old position will be erased. Then, it will update the set direction by the
+* user from the nes. Then, in a loop, it will try to make the next move that was just set. Then it will check for dots, check to see if a ghost
+* has been hit (and will break if so), and will then make the current move. If the character enters a warp tunnel, the character will be redrawn on the
+* other side of the screen. This all happens in a loop 6 times making the pacman characters the fastest in the game. Finally, after all movement is made
+* the character is drawn to the screen.
 */
 void ms_pacman_move() {
     erase_pacman(msxCoord, msyCoord);
@@ -324,7 +354,9 @@ void ms_pacman_move() {
 }
 
 /*
-*
+* This function will check the next move as asked for by the user, and will try all of the sides. This will continue to happen unless the next move
+* asked for is changed (in which case it will repeat with that one), or until it is able to make the next move, in which case the current move will
+* be set.
 */
 static void try_to_make_next_move() {
     if (nextMove == 'r' && !check_sides(xCoord, yCoord, 'r', GL_BLUE)) curMove = 'r';
@@ -334,7 +366,7 @@ static void try_to_make_next_move() {
 }
 
 /*
-*
+* This will check the side that the current move is in, and will move Ms. Pacman accordingly (moving one pixel in the direction)
 */
 static void make_current_move() {
     if (curMove == 'r' && !check_sides(xCoord, yCoord, 'r', GL_BLUE)) xCoord++;
@@ -344,7 +376,11 @@ static void make_current_move() {
 }
 
 /*
-*
+* This function will move Pacman across the screen. First, his old position will be erased. Then, it will update the set direction by the
+* user from the nes. Then, in a loop, it will try to make the next move that was just set. Then it will check for dots, check to see if a ghost
+* has been hit (and will break if so), and will then make the current move. If the character enters a warp tunnel, the character will be redrawn on the
+* other side of the screen. This all happens in a loop 6 times making the pacman characters the fastest in the game. Finally, after all movement is made
+* the character is drawn to the screen.
 */
 void pacman_move() {
     erase_pacman(xCoord, yCoord);

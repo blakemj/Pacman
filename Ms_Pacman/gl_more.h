@@ -3,6 +3,7 @@
 
 #include "gl.h"
 
+//These define different versions of different colors by their rgb values
 #define GL_PURPLE1 0xff8B2BE2
 #define GL_PURPLE2 0xff8A2CE2
 #define GL_PURPLE3 0xff8A2BE1
@@ -14,6 +15,7 @@
 #define GL_HOTPINK3 0xffFF1393
 #define GL_HOTPINK4 0xffFF1492
 
+//This function will take in a given square space with the xCoord and yCoord in the top left and draw a circle in it
 void gl_draw_circle(int xCoord, int yCoord, int width, int height, color_t color);
 
 #endif

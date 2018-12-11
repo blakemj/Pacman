@@ -7,6 +7,8 @@
 #include "printf.h"
 #include "assert.h"
 
+//THIS IS SIMPLY A MODIFIED VERSION OF THE PREVIOUSLY WRITTEN KEYBOARD FUNCTION--VERY LITTLE IS CHANGED OR USED
+
 //This defines how many bits represent the data being sent
 #define NUM_DATA_BITS 8
 
@@ -98,6 +100,8 @@ void pacman_keyboard_init(void)
     interrupts_global_enable();
 }
 
+
+//THIS IS WHERE THE CHANGE IS--IT WILL NO LONGER CONTINUOUSLY LOOP--IT WILL SIMPLY RETURN IF A KEY IS FOUND PRESSED
 /*
 * This function will continuously loop and each time it will try to dequeue from the ringbuffer.
 * Once it is able to, it will return the unsigned char that was saved in the ringbuffer as a 

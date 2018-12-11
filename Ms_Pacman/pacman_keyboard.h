@@ -3,6 +3,8 @@
 
 #include "ps2.h"
 
+//THIS IS ALMOST THE SAME AS KEYBOARD.H FOR CS CLASS, BUT UPDDATED FOR USE WITH PACMAN
+
 /*
  * Module to read key events from a PS/2 keyboard.
  *

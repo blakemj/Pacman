@@ -2,7 +2,9 @@
 #include "gl.h"
 
 /*
-*
+* This function will take in a rectangle with top left corner at coordinate (xCoord, yCoord) with width and height. This will
+* loop through all of the pixels in this rectangle and determine whether they fall inside a circle with a diameter of the width.
+* This will then fill in the pixels that are inside with color.
 */
 void gl_draw_circle(int xCoord, int yCoord, int width, int height, color_t color) {
    double xCenter = xCoord + (width / 2);
