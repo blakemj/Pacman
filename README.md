@@ -11,9 +11,9 @@ The player has the option of selecting one or two players. If the B button is pr
 This is done with an NES Controller:
 ![NES Controller](Images/Controller.jpg)
 In the game, the ghosts will start in the ghost prison box. The ghosts will then move out, and move around the screen as they follow a target. The two players will each controller their respective player--player one controls Pacman, player two controls Ms. Pacman.
-![Regular Ghosts](Images/Regular.jpg)
+![Regular Ghosts](Images/Regular_Ghosts.jpg)
 If a player eats a super dot, then the ghosts go into frightened mode. This turns the ghosts purple.
-![Frightened Ghosts](Images/Frightened.jpg)
+![Frightened Ghosts](Images/Frightened_Ghosts.jpg)
 Finally, if both players die, then they lose a life. If they lose three lives, then it is game over.
 ![Game Over](Game_Over.jpg)
 
